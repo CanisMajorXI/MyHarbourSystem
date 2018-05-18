@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,6 +22,7 @@ public class ShipperController {
         ModelAndView modelAndView = new ModelAndView();
         try {
             //todo
+            modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,14 +31,13 @@ public class ShipperController {
     }
 
     /**
-     *
      * @param type
      * @param size
      * @return
      */
     @RequestMapping("/add/emptycontainer")
     @ResponseBody
-    public Integer addEmptyContainer(@RequestParam("type") Integer type, @RequestParam("size") Integer size,HttpSession session) {
+    public Integer addEmptyContainer(@RequestParam("type") Integer type, @RequestParam("size") Integer size, HttpSession session) {
         try {
             if (type == null || size == null) return null;
             //todo
@@ -53,7 +54,7 @@ public class ShipperController {
      */
     @RequestMapping("/add/cargo")
     @ResponseBody
-    public Integer addCargo(@RequestParam("type") Integer cargo_type,HttpSession session) {
+    public Integer addCargo(@RequestParam("type") Integer cargo_type, HttpSession session) {
         try {
             if (cargo_type == null) return null;
             //todo
@@ -65,7 +66,6 @@ public class ShipperController {
     }
 
     /**
-     *
      * @param cargo_type
      * @param size
      * @param amount
