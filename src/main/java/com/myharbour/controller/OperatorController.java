@@ -11,16 +11,42 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/api/operator")
 public class OperatorController {
 
-    @RequestMapping("/get/containers/")
+    @RequestMapping("/get/containers")
     public ModelAndView getContainers(HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
         try {
             //todo
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
-        }catch (Exception e){
-         e.printStackTrace();
-         return modelAndView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return modelAndView;
         }
     }
+
+    @RequestMapping("/get/cargos")
+    public ModelAndView getCargo(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        try {
+            //todo
+            modelAndView.setView(new MappingJackson2JsonView());
+            return modelAndView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return modelAndView;
+        }
+    }
+
+    @RequestMapping("/export/container")
+    public boolean exportContainer() {
+        try {
+            //todo
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }
