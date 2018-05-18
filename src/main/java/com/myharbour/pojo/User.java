@@ -2,6 +2,11 @@ package com.myharbour.pojo;
 
 public class User {
 
+    //用户分3种，操作员(operator)，货主(shipper)，管理员(admin)
+    public static final int TYPE_OPERATOR = 1;
+    public static final int TYPE_SHIPPER = 2;
+    public static final int TYPE_ADMIN = 3;
+
     //判断是否失效
     public static final boolean STATUS_VALID = true;
     public static final boolean STATUS_INVALID = false;
@@ -13,7 +18,9 @@ public class User {
 
     private String email;
 
-    private boolean valid;
+    private Boolean valid;
+
+    private Integer type;
 
     public Integer getUserId() {
         return userId;
@@ -39,11 +46,19 @@ public class User {
         this.email = email;
     }
 
-    public boolean isValid() {
+    public Boolean getValid() {
         return valid;
     }
 
-    public void setValid(boolean valid) {
+    public void setValid(Boolean valid) {
         this.valid = valid;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

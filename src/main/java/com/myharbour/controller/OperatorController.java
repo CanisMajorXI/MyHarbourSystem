@@ -8,6 +8,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpSession;
 
+
 @Controller
 @RequestMapping("/api/operator")
 public class OperatorController {
