@@ -3,12 +3,36 @@ package com.myharbour.pojo;
 public class Container {
 
     //对应箱子尺寸
-    public static final byte SIZE_SMALL = 0;
-    public static final byte SIZE_LARGE = 1;
+    public static final int SIZE_SMALL = 0;
+    public static final int SIZE_LARGE = 1;
     //对应箱子类型
-    public static final byte TYPE_ORDINARY = 0;
-    public static final byte TYPE_FREEZE = 1;
-    public static final byte TYPE_HAZARD = 2;
+    public static final int TYPE_ORDINARY = 0;
+    public static final int TYPE_FREEZE = 1;
+    public static final int TYPE_HAZARD = 2;
+
+    //对应箱子在任务区还是在仓库
+    public static final int AREA_TASK = 0;
+    public static final int AREA_REPO = 1;
+
+    //行的范围
+    public static final int TOTAL_ROWS_EMPTY = 5;
+    public static final int TOTAL_ROWS_ORDINARY = 10;
+    public static final int TOTAL_ROWS_FREEZE = 6;
+    public static final int TOTAL_ROWS_HAZARD = 6;
+    //列的范围
+    public static final int TOTAL_COLUMNS_EMPTY = 10;
+    public static final int TOTAL_COLUMNS_ORDINARY = 20;
+    public static final int TOTAL_COLUMNS_FREEZE = 10;
+    public static final int TOTAL_COLUMNS_HAZARD = 10;
+    //层的范围
+    public static final int TOTAL_LAYERS_EMPTY = 6;
+    public static final int TOTAL_LAYERS_ORDINARY = 4;
+    public static final int TOTAL_LAYERS_FREEZE = 4;
+    public static final int TOTAL_LAYERS_HAZARD = 2;
+
+    //判断是否失效
+    public static final boolean STATUS_VALID = true;
+    public static final boolean STATUS_INVALID = false;
 
     private Integer containerId;
 

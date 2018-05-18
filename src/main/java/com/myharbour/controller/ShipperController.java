@@ -86,7 +86,19 @@ public class ShipperController {
             e.printStackTrace();
             return null;
         }
-
+    }
+    @RequestMapping("/get/info")
+    public ModelAndView getInfo(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        try {
+            Integer id = (Integer) session.getAttribute("id");
+            //todo
+            modelAndView.setView(new MappingJackson2JsonView());
+            return modelAndView;
+        }catch (Exception e){
+            e.printStackTrace();
+            return modelAndView;
+        }
     }
 }
 /*

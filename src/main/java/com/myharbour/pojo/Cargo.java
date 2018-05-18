@@ -2,6 +2,10 @@ package com.myharbour.pojo;
 
 public class Cargo {
 
+    //判断是否失效
+    public static final boolean STATUS_VALID = true;
+    public static final boolean STATUS_INVALID = false;
+
     private Integer cargoId;
 
     private Integer cargoTypeId;
