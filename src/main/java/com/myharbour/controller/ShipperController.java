@@ -3,33 +3,90 @@ package com.myharbour.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/api/shipper")
 public class ShipperController {
 
-    @RequestMapping("/addemptycontainer")
-    public boolean addEmptyContainer(@RequestParam("type") Integer type, @RequestParam("size") Integer size) {
+    /**
+     * @return
+     */
+
+    @RequestMapping("/get/cargoattr")
+    public ModelAndView getCargoAttr(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
         try {
-            if (type == null || size == null) return false;
             //todo
-            return true;
+            return modelAndView;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return modelAndView;
         }
     }
 
-    @RequestMapping("/addcargo")
-    public boolean addCargo(@RequestParam("type") Integer cargo_type, @RequestParam("size") Integer gross) {
+    /**
+     *
+     * @param type
+     * @param size
+     * @return
+     */
+    @RequestMapping("/add/emptycontainer")
+    @ResponseBody
+    public Integer addEmptyContainer(@RequestParam("type") Integer type, @RequestParam("size") Integer size,HttpSession session) {
         try {
-            if(cargo_type == null || gross == null) return false;
+            if (type == null || size == null) return null;
             //todo
-            return true;
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
+    }
+
+    /**
+     * @param cargo_type
+     * @return
+     */
+    @RequestMapping("/add/cargo")
+    @ResponseBody
+    public Integer addCargo(@RequestParam("type") Integer cargo_type,HttpSession session) {
+        try {
+            if (cargo_type == null) return null;
+            //todo
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param cargo_type
+     * @param size
+     * @param amount
+     * @return
+     */
+    @RequestMapping("/add/containerwithcargo")
+    @ResponseBody
+    public String addContainerWithCargo(@RequestParam("container_type") Integer cargo_type,
+                                        @RequestParam("size") Integer size,
+                                        @RequestParam("amount") Integer amount, HttpSession session) {
+        try {
+            if (cargo_type == null || size == null || amount == null) return null;
+            if (!(amount == 1 || amount == 2)) return null;
+            if (size == 1 && amount == 2) return null;
+            //todo
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 }
 /*
