@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myharbour.dao.ContainerMapper">
+    <resultMap id = "container" type="container">
+        <id property="containerId" column="container_id"/>
+        <result property="containerArea" column="container_area"/>
+        <result property="row" column="container_row"/>
+        <result property="column" column="container_cloumn"/>
+        <result property="layer" column="container_layer"/>
+        <result property="type" column="container_type"/>
+        <result property="size" column="container_size"/>
+        <result property="valid" column="valid"/>
+    </resultMap>
+
+    <select id="getValidContainers" resultType="container" parameterType="container">
+        SELECT * FROM container_table WHERE valid = 1
+        <if test="containerId != null">
+            AND container_id = #{containerId}
+        </if>
+        <if test="containerArea != null">
+            AND container_area = #{containerArea}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="row != null">
+            AND container_row = #{row}
+        </if>
+        <if test="column != null">
+            AND container_column = #{column}
+        </if>
+        <if test="layer != null">
+            AND container_layer = #{layer}
+        </if>
+        <if test="type != null">
+            AND  container_type= #{type}
+        </if>
+        <if test="size != null">
+            AND container_size = #{size}
+        </if>
+    </select>
+
+    <select id="getUnvalidContainers" resultType="container" parameterType="container">
+        SELECT * FROM Container_table WHERE valid = 0
+        <if test="containerId != null">
+            AND container_id = #{containerId}
+        </if>
+        <if test="containerArea != null">
+            AND container_area = #{containerArea}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="row != null">
+            AND container_row = #{row}
+        </if>
+        <if test="column != null">
+            AND container_column = #{column}
+        </if>
+        <if test="layer != null">
+            AND container_layer = #{layer}
+        </if>
+        <if test="type != null">
+            AND  container_type= #{type}
+        </if>
+        <if test="size != null">
+            AND container_size = #{size}
+        </if>
+    </select>
+
+    <select id="getContainerById" resultType="container" parameterType="int">
+        SELECT * FROM container_table WHERE container_id = #{id}
+    </select>
+
+    <insert id="insertContainer" parameterType="container">
+        INSERT into container_table VALUES (#{containerId},#{containerArea},#{userId},#{row},#{column},#{layer},#{type},#{size},1)
+    </insert>
+
+    <update id="updateContainer" parameterType="container">
+        UPDATE Container_table
+        <trim prefix="SET" prefixOverrides=",">
+            <if test="containerId != null">
+                , container_id = #{containerId}
+            </if>
+            <if test="containerArea != null">
+                , container_area = #{containerArea}
+            </if>
+            <if test="userId != null">
+                , user_id = #{userId}
+            </if>
+            <if test="row != null">
+                , container_row = #{row}
+            </if>
+            <if test="column != null">
+                , container_column = #{column}
+            </if>
+            <if test="layer != null">
+                , container_layer = #{layer}
+            </if>
+            <if test="type != null">
+                ,  container_type= #{type}
+            </if>
+            <if test="size != null">
+                , container_size = #{size}
+            </if>
+            <if test="valid != null">
+                , valid = #{valid}
+            </if>
+        </trim>
+        WHERE container_id = #{containerId}
+    </update>
+</mapper>

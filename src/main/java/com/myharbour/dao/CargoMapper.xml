@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myharbour.dao.CargoMapper">
+    <resultMap id = "cargo" type="cargo">
+        <id property="cargoId" column="cargo_id"/>
+        <result property="cargoTypeId" column="cargo_type_id"/>
+        <result property="gross" column="gross"/>
+        <result property="containerId" column="container_id"/>
+        <result property="valid" column="valid"/>
+    </resultMap>
+
+    <select id="getValidGargos" resultType="cargo" parameterType="cargo">
+        SELECT * FROM cargo_table WHERE valid = 1
+            <if test="cargoId != null">
+                AND cargo_id = #{cargoId}
+            </if>
+            <if test="cargoTypeId != null">
+                AND cargo_type_id = #{cargoTypeId}
+            </if>
+            <if test="gross != null">
+                AND gross = #{gross}
+            </if>
+            <if test="containerId != null">
+                AND container_id = #{containerId}
+            </if>
+    </select>
+
+    <select id="getUnvalidGargos" resultType="cargo" parameterType="cargo">
+        SELECT * FROM cargo_table WHERE valid = 0
+        <if test="cargoId != null">
+            AND cargo_id = #{cargoId}
+        </if>
+        <if test="cargoTypeId != null">
+            AND cargo_type_id = #{cargoTypeId}
+        </if>
+        <if test="gross != null">
+            AND gross = #{gross}
+        </if>
+        <if test="containerId != null">
+            AND container_id = #{containerId}
+        </if>
+    </select>
+
+    <select id="getGargoById" resultType="cargo" parameterType="int">
+        SELECT * FROM cargo_table WHERE cargo_id = #{id}
+    </select>
+
+    <insert id="insertCargo" parameterType="cargo">
+        INSERT into cargo_table VALUES (#{cargoId},#{typeId},#{gross},#{containerId},1)
+    </insert>
+
+    <update id="updateCargo" parameterType="cargo">
+        UPDATE cargo_table
+        <trim prefix="SET" prefixOverrides=",">
+            <if test="cargoId != null">
+                , cargo_id = #{cargoId}
+            </if>
+            <if test="cargoTypeId != null">
+                , cargo_type_id = #{cargoTypeId}
+            </if>
+            <if test="gross != null">
+                , gross = #{gross}
+            </if>
+            <if test="containerId != null">
+                , container_id = #{containerId}
+            </if>
+            <if test="valid != null">
+                , valid = #{valid}
+            </if>
+        </trim>
+        WHERE cargo_id = #{cargoId}
+    </update>
+</mapper>
