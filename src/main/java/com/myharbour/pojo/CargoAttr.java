@@ -16,7 +16,7 @@ public class CargoAttr {
 
     private String cargoName;
 
-    private Integer type;
+    private Integer containerType;
 
     private String unitType;
 
@@ -38,12 +38,12 @@ public class CargoAttr {
         this.cargoName = cargoName;
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getContainerType() {
+        return containerType;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setContainerType(Integer containerType) {
+        this.containerType = containerType;
     }
 
     public String getUnitType() {

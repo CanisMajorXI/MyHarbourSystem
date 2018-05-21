@@ -35,7 +35,7 @@
             AND container_layer = #{layer}
         </if>
         <if test="type != null">
-            AND  container_type= #{type}
+            AND container_type= #{type}
         </if>
         <if test="size != null">
             AND container_size = #{size}

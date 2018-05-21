@@ -1,6 +1,11 @@
 package com.myharbour.controller;
 
+import com.myharbour.pojo.ResultantCargoAttr;
+import com.myharbour.service.CargoAttrService;
+import com.myharbour.service.SubmitService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -8,20 +13,29 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/shipper")
 public class ShipperController {
 
+    @Autowired
+    private CargoAttrService cargoAttrService = null;
+
+    @Autowired
+    private SubmitService submitService = null;
+
     /**
      * @return
      */
-
-    @RequestMapping("/get/cargoattr")
-    public ModelAndView getCargoAttr(HttpSession session) {
+//http://localhost:8080/api/shipper/get/cargoattrs
+    @RequestMapping("/get/cargoattrs")
+    public ModelAndView getCargoAttrs(ModelMap modelMap, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
         try {
             //todo
+            List<ResultantCargoAttr> resultantCargoAttrs = cargoAttrService.getCargoAttrs();
+            modelMap.addAttribute("cargoAttrs", resultantCargoAttrs);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
         } catch (Exception e) {
@@ -35,7 +49,7 @@ public class ShipperController {
      * @param size
      * @return
      */
-    @RequestMapping("/add/emptycontainer")
+    @RequestMapping("/add/empty-container")
     @ResponseBody
     public Integer addEmptyContainer(@RequestParam("type") Integer type, @RequestParam("size") Integer size, HttpSession session) {
         try {
@@ -54,7 +68,7 @@ public class ShipperController {
      */
     @RequestMapping("/add/cargo")
     @ResponseBody
-    public Integer addCargo(@RequestParam("type") Integer cargo_type, HttpSession session) {
+    public Integer addCargo(@RequestParam("type") Integer cargo_type) {
         try {
             if (cargo_type == null) return null;
             //todo
@@ -71,11 +85,11 @@ public class ShipperController {
      * @param amount
      * @return
      */
-    @RequestMapping("/add/containerwithcargo")
+    @RequestMapping("/add/container-with-cargo")
     @ResponseBody
     public String addContainerWithCargo(@RequestParam("container_type") Integer cargo_type,
                                         @RequestParam("size") Integer size,
-                                        @RequestParam("amount") Integer amount, HttpSession session) {
+                                        @RequestParam("amount") Integer amount) {
         try {
             if (cargo_type == null || size == null || amount == null) return null;
             if (!(amount == 1 || amount == 2)) return null;
@@ -87,6 +101,7 @@ public class ShipperController {
             return null;
         }
     }
+
     @RequestMapping("/get/info")
     public ModelAndView getInfo(HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
@@ -95,7 +110,7 @@ public class ShipperController {
             //todo
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return modelAndView;
         }

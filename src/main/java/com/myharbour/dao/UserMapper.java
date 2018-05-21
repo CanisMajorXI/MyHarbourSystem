@@ -1,8 +1,11 @@
 package com.myharbour.dao;
 
 import com.myharbour.pojo.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
+@Repository
 
 public interface UserMapper {
 
