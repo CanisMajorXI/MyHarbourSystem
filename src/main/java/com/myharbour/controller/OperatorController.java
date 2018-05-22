@@ -14,8 +14,12 @@ import javax.servlet.http.HttpSession;
 public class OperatorController {
 
     @RequestMapping("/get/containers")
-    public ModelAndView getContainers(HttpSession session) {
+    public ModelAndView getContainers(@RequestParam(name = "size", required = false) Integer containerSize,
+                                      @RequestParam(name = "type", required = false) Integer containerType,
+                                      @RequestParam(name = "area", required = false) Integer containerArea,
+                                      @RequestParam(name = "page", required = true) Integer page) {
         ModelAndView modelAndView = new ModelAndView();
+        if (page == null || page < 1) return modelAndView;
         try {
             //todo
             modelAndView.setView(new MappingJackson2JsonView());
