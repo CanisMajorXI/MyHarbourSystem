@@ -82,9 +82,7 @@
     <update id="updateContainer" parameterType="container">
         UPDATE container_table
         <trim prefix="SET" prefixOverrides=",">
-            <if test="containerId != null">
-                , container_id = #{containerId}
-            </if>
+
             <if test="containerArea != null">
                 , container_area = #{containerArea}
             </if>

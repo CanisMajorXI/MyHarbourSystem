@@ -61,11 +61,8 @@
     <update id="updateCargo" parameterType="cargo">
         UPDATE cargo_table
         <trim prefix="SET" prefixOverrides=",">
-            <if test="cargoId != null">
-                , cargo_id = #{cargoId}
-            </if>
             <if test="userId != null">
-                , user_Id = #{userId}
+                , user_id = #{userId}
             </if>
             <if test="cargoTypeId != null">
                 , cargo_type_id = #{cargoTypeId}

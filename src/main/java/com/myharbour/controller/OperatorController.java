@@ -1,6 +1,8 @@
 package com.myharbour.controller;
 
+import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
+import com.myharbour.service.ExportService;
 import com.myharbour.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,9 @@ public class OperatorController {
     @Autowired
     private QueryService queryService = null;
 
+    @Autowired
+    private ExportService exportService = null;
+
     @RequestMapping("/get/count")
     @ResponseBody
     public Integer getCount(@RequestParam(name = "size", required = false) Integer containerSize,
@@ -41,10 +46,30 @@ public class OperatorController {
                                       @RequestParam(name = "area", required = false) Integer containerArea,
                                       @RequestParam(name = "page", required = true) Integer page, ModelMap modelMap) {
         ModelAndView modelAndView = new ModelAndView();
-     //   if (page == null || page < 1) return modelAndView;
+        //   if (page == null || page < 1) return modelAndView;
         try {
             List<Container> list = queryService.getContainersBySpecificParas(containerSize, containerType, containerArea, page);
-            modelMap.addAttribute("containers",list);
+//            for (Container container : list) {
+//                if(container.getContainerArea() == Container.AREA_TASK) {
+//                    container.setRow(0);
+//                }
+//            }
+            modelMap.addAttribute("containers", list);
+            modelAndView.setView(new MappingJackson2JsonView());
+            return modelAndView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return modelAndView;
+        }
+    }
+
+    @RequestMapping("/get/cargos-by-containerid")
+    public ModelAndView getCargosByContainerId(@RequestParam("id") Integer id, ModelMap modelMap) {
+        ModelAndView modelAndView = new ModelAndView();
+        if (id == null) return modelAndView;
+        try {
+            List<Cargo> list = queryService.getCargosByContainerId(id);
+            modelMap.addAttribute("cargos", list);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
         } catch (Exception e) {
@@ -67,9 +92,10 @@ public class OperatorController {
     }
 
     @RequestMapping("/export/container")
-    public boolean exportContainer() {
+    public boolean exportAContainer(@RequestParam("id") Integer containerId) {
+        if (containerId == null) return false;
         try {
-            //todo
+            exportService.exportAContainer(containerId);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

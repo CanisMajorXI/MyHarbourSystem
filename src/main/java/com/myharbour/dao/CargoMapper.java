@@ -66,4 +66,6 @@ public interface CargoMapper {
      * @param cargo
      */
     void updateCargo(Cargo cargo);
+
+    void updateCargoToInValid();
 }

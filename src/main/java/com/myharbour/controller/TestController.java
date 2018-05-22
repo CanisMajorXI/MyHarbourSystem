@@ -5,6 +5,8 @@ import com.myharbour.dao.CargoMapper;
 import com.myharbour.dao.ContainerMapper;
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.CargoAttr;
+import com.myharbour.pojo.Container;
+import com.myharbour.service.ExportService;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,9 @@ public class TestController {
     private CargoMapper cargoMapper = null;
     @Autowired
     private ContainerMapper containerMapper = null;
+    @Autowired
+    private ExportService exportService = null;
+
 
     @RequestMapping("/1")
     @ResponseBody
@@ -81,5 +86,17 @@ public class TestController {
         List<Cargo> cargos = cargoMapper.getCargoById(10000001,new RowBounds());
         return cargos;
     }
-
+    @RequestMapping("/10")
+    @ResponseBody
+    public boolean t10(){
+//        Cargo cargo = new Cargo();
+//        cargo.setContainerId(10000015);
+//        cargo.setValid(false);
+//        cargoMapper.updateCargo(cargo);
+        Container container = new Container();
+        container.setContainerId(10000015);
+        container.setValid(false);
+        containerMapper.updateContainer(container);
+        return true;
+    }
 }

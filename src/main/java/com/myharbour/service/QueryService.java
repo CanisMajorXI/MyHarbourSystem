@@ -13,11 +13,11 @@ public interface QueryService {
      */
 //    Container getContainerById(int containerId);
 //
-//    /**
-//     * @param containerId
-//     * @return 根据箱子Id返回该箱子中的货物，小箱子最多有一份货物，大箱子可以有1份或者两份货物
-//     */
-//    List<Cargo> getCargosByContainerId(int containerId);
+    /**
+     * @param containerId
+     * @return 根据箱子Id返回该箱子中的货物，小箱子最多有一份货物，大箱子可以有1份或者两份货物
+     */
+    List<Cargo> getCargosByContainerId(int containerId);
 //
 //    /**
 //     * @return 获取所有散货
@@ -33,14 +33,13 @@ public interface QueryService {
 //     * @return
 //     */
 
-    Integer getCountBySpecificParas(Integer size,
-                                    Integer type,
-                                    Integer area);
+    Integer getCountBySpecificParas(Integer size, Integer type, Integer area);
 
     List<Container> getContainersBySpecificParas(Integer size,
                                                  Integer type,
                                                  Integer area,
                                                  int page);
+
 
 //    /**
 //     * @return 获取所有的在仓库外的箱子
