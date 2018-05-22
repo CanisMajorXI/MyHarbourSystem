@@ -5,6 +5,7 @@
 <mapper namespace="com.myharbour.dao.CargoMapper">
     <resultMap id = "cargo" type="cargo">
         <id property="cargoId" column="cargo_id"/>
+        <result property="userId" column="user_id"/>
         <result property="cargoTypeId" column="cargo_type_id"/>
         <result property="gross" column="gross"/>
         <result property="containerId" column="container_id"/>
@@ -49,7 +50,7 @@
         </if>
     </select>
 
-    <select id="getGargoById" resultMap="cargo">
+    <select id="getCargoById" resultMap="cargo">
         SELECT * FROM cargo_table WHERE valid = 1 AND cargo_id = #{id}
     </select>
 

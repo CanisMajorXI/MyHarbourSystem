@@ -6,8 +6,9 @@
     <resultMap id = "container" type="container">
         <id property="containerId" column="container_id"/>
         <result property="containerArea" column="container_area"/>
+        <result property="userId" column="user_id"/>
         <result property="row" column="container_row"/>
-        <result property="column" column="container_cloumn"/>
+        <result property="column" column="container_column"/>
         <result property="layer" column="container_layer"/>
         <result property="type" column="container_type"/>
         <result property="size" column="container_size"/>
@@ -70,7 +71,7 @@
         </if>
     </select>
 
-    <select id="getContainerById" resultType="container" parameterType="int">
+    <select id="getContainerById" resultMap="container">
         SELECT * FROM container_table WHERE valid=1 AND container_id = #{id}
     </select>
 
