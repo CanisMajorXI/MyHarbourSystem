@@ -14,7 +14,7 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://47.95.1.12:3306/myharbour"/>
+        <property name="url" value="jdbc:mysql://47.95.1.12:3306/myharbour?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"/>
         <property name="username" value="root"/>
         <property name="password" value="jiangzemin"/>
         <!--连接池的最大数据库连接数 -->

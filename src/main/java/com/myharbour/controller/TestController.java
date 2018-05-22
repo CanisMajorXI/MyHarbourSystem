@@ -26,7 +26,7 @@ public class TestController {
     @ResponseBody
     public CargoAttr test2() {
         CargoAttr cargoAttr = new CargoAttr();
-        cargoAttr.setCargoTypeId(10000044);
+        cargoAttr.setCargoTypeId(10000074);
         cargoAttr.setCargoName("角蛙");
         cargoAttr.setContainerType(0);
         cargoAttr.setValid(true);
@@ -60,5 +60,10 @@ public class TestController {
         cargoAttrMapper.insertCargoAttr(cargoAttr);
         /// CargoAttr cargoAttr = cargoAttrMapper.getCargoAttrById(10000001,new RowBounds());
         return cargoAttr;
+    }
+
+    @RequestMapping("/5")
+    public void test5(@RequestParam("para") String name) {
+        System.out.println(name);
     }
 }
