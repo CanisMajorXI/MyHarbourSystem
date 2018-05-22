@@ -1,8 +1,8 @@
 package com.myharbour.dao;
 
 import com.myharbour.pojo.Container;
-import com.myharbour.pojo.RowBounds;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

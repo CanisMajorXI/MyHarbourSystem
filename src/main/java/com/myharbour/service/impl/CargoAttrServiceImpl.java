@@ -3,8 +3,8 @@ package com.myharbour.service.impl;
 import com.myharbour.dao.CargoAttrMapper;
 import com.myharbour.pojo.CargoAttr;
 import com.myharbour.pojo.ResultantCargoAttr;
-import com.myharbour.pojo.RowBounds;
 import com.myharbour.service.CargoAttrService;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -25,7 +25,7 @@ public class CargoAttrServiceImpl implements CargoAttrService {
     public List<ResultantCargoAttr> getCargoAttrs() {
         CargoAttr cargoAttr1 = new CargoAttr();
         // cargoAttr1.setCargoTypeId(11111111);
-        List<CargoAttr> cargoAttrs = cargoAttrMapper.getCargoAttrs(null, null, null, null, new RowBounds());
+        List<CargoAttr> cargoAttrs = cargoAttrMapper.getCargoAttrs(null, null, null, null,new RowBounds());
         List<ResultantCargoAttr> list = new ArrayList<>();
         for (CargoAttr cargoAttr : cargoAttrs) {
             ResultantCargoAttr resultantCargoAttr = new ResultantCargoAttr();

@@ -1,27 +1,50 @@
 package com.myharbour.controller;
 
+import com.myharbour.pojo.Container;
+import com.myharbour.service.QueryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 
 @Controller
 @RequestMapping("/api/operator")
 public class OperatorController {
 
+    @Autowired
+    private QueryService queryService = null;
+
+    @RequestMapping("/get/count")
+    @ResponseBody
+    public Integer getCount(@RequestParam(name = "size", required = false) Integer containerSize,
+                            @RequestParam(name = "type", required = false) Integer containerType,
+                            @RequestParam(name = "area", required = false) Integer containerArea) {
+        try {
+            return queryService.getCountBySpecificParas(containerSize, containerType, containerArea);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @RequestMapping("/get/containers")
     public ModelAndView getContainers(@RequestParam(name = "size", required = false) Integer containerSize,
                                       @RequestParam(name = "type", required = false) Integer containerType,
                                       @RequestParam(name = "area", required = false) Integer containerArea,
-                                      @RequestParam(name = "page", required = true) Integer page) {
+                                      @RequestParam(name = "page", required = true) Integer page, ModelMap modelMap) {
         ModelAndView modelAndView = new ModelAndView();
-        if (page == null || page < 1) return modelAndView;
+     //   if (page == null || page < 1) return modelAndView;
         try {
-            //todo
+            List<Container> list = queryService.getContainersBySpecificParas(containerSize, containerType, containerArea, page);
+            modelMap.addAttribute("containers",list);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
         } catch (Exception e) {

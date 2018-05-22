@@ -2,6 +2,7 @@ package com.myharbour.service;
 
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
+import com.myharbour.pojo.ContainersAndTotalPages;
 
 import java.util.List;
 
@@ -31,10 +32,15 @@ public interface QueryService {
 //     * @param page
 //     * @return
 //     */
-    List<Container>getContainersBySpecificParas(Integer size,
-                                                Integer type,
-                                                Integer area,
-                                                int page);
+
+    Integer getCountBySpecificParas(Integer size,
+                                    Integer type,
+                                    Integer area);
+
+    List<Container> getContainersBySpecificParas(Integer size,
+                                                 Integer type,
+                                                 Integer area,
+                                                 int page);
 
 //    /**
 //     * @return 获取所有的在仓库外的箱子
