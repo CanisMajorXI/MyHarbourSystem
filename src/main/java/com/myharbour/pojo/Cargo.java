@@ -8,6 +8,8 @@ public class Cargo {
 
     private Integer cargoId;
 
+    private Integer userId;
+
     private Integer cargoTypeId;
 
     private Integer gross;
@@ -22,6 +24,14 @@ public class Cargo {
 
     public void setCargoId(Integer cargoId) {
         this.cargoId = cargoId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public Integer getCargoTypeId() {

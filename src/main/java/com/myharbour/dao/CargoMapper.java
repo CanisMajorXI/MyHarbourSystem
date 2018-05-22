@@ -29,6 +29,7 @@ public interface CargoMapper {
      */
     //不加valid默认查询所有valid为true(1)的列！
     List<Cargo> getCargos(@Param("cargoId") Integer cargoId,
+                               @Param("userId") Integer userId,
                                @Param("cargoTypeId") Integer cargoTypeId,
                                @Param("gross") Integer gross,
                                @Param("containerId") Integer containerId,
@@ -43,6 +44,7 @@ public interface CargoMapper {
      * @return
      */
     List<Cargo> getInvalidCargos(@Param("cargoId") Integer cargoId,
+                                 @Param("userId") Integer userId,
                                  @Param("cargoTypeId") Integer cargoTypeId,
                                  @Param("gross") Integer gross,
                                  @Param("containerId") Integer containerId,

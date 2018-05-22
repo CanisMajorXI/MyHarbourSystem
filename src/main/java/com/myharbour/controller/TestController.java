@@ -26,7 +26,7 @@ public class TestController {
     @ResponseBody
     public CargoAttr test2() {
         CargoAttr cargoAttr = new CargoAttr();
-        cargoAttr.setCargoTypeId(10000014);
+        cargoAttr.setCargoTypeId(10000044);
         cargoAttr.setCargoName("角蛙");
         cargoAttr.setContainerType(0);
         cargoAttr.setValid(true);
@@ -39,7 +39,7 @@ public class TestController {
     @ResponseBody
     public CargoAttr test3() {
         CargoAttr cargoAttr = new CargoAttr();
-        cargoAttr.setCargoTypeId(10000012);
+        cargoAttr.setCargoTypeId(10000033);
         cargoAttr.setCargoName("jaingzemin");
         cargoAttr.setContainerType(0);
         cargoAttr.setValid(true);
