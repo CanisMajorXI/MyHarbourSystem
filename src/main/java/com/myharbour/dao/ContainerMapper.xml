@@ -14,7 +14,7 @@
         <result property="valid" column="valid"/>
     </resultMap>
 
-    <select id="getValidContainers" resultType="container" parameterType="container">
+    <select id="getContainers" resultMap="container">
         SELECT * FROM container_table WHERE valid = 1
         <if test="containerId != null">
             AND container_id = #{containerId}
@@ -42,8 +42,8 @@
         </if>
     </select>
 
-    <select id="getUnvalidContainers" resultType="container" parameterType="container">
-        SELECT * FROM Container_table WHERE valid = 0
+    <select id="getInvalidContainers" resultMap="container">
+        SELECT * FROM container_table WHERE valid = 0
         <if test="containerId != null">
             AND container_id = #{containerId}
         </if>
@@ -71,7 +71,7 @@
     </select>
 
     <select id="getContainerById" resultType="container" parameterType="int">
-        SELECT * FROM container_table WHERE container_id = #{id}
+        SELECT * FROM container_table WHERE valid=1 AND container_id = #{id}
     </select>
 
     <insert id="insertContainer" parameterType="container">
@@ -79,7 +79,7 @@
     </insert>
 
     <update id="updateContainer" parameterType="container">
-        UPDATE Container_table
+        UPDATE container_table
         <trim prefix="SET" prefixOverrides=",">
             <if test="containerId != null">
                 , container_id = #{containerId}

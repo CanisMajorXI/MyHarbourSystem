@@ -11,7 +11,7 @@
         <result property="valid" column="valid"/>
     </resultMap>
 
-    <select id="getValidGargos" resultType="cargo" parameterType="cargo">
+    <select id="getCargos" resultMap="cargo">
         SELECT * FROM cargo_table WHERE valid = 1
             <if test="cargoId != null">
                 AND cargo_id = #{cargoId}
@@ -27,7 +27,7 @@
             </if>
     </select>
 
-    <select id="getUnvalidGargos" resultType="cargo" parameterType="cargo">
+    <select id="getInvalidCargos" resultMap="cargo">
         SELECT * FROM cargo_table WHERE valid = 0
         <if test="cargoId != null">
             AND cargo_id = #{cargoId}
@@ -43,8 +43,8 @@
         </if>
     </select>
 
-    <select id="getGargoById" resultType="cargo" parameterType="int">
-        SELECT * FROM cargo_table WHERE cargo_id = #{id}
+    <select id="getGargoById" resultMap="cargo">
+        SELECT * FROM cargo_table WHERE valid = 1 AND cargo_id = #{id}
     </select>
 
     <insert id="insertCargo" parameterType="cargo">
