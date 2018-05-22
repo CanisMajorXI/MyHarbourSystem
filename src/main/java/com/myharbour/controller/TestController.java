@@ -1,20 +1,32 @@
 package com.myharbour.controller;
 
 import com.myharbour.dao.CargoAttrMapper;
+import com.myharbour.dao.CargoMapper;
+import com.myharbour.dao.ContainerMapper;
+import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.CargoAttr;
+import com.myharbour.pojo.Container;
 import com.myharbour.pojo.RowBounds;
+import com.sun.rowset.internal.Row;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/test")
 public class TestController {
     @Autowired
     private CargoAttrMapper cargoAttrMapper = null;
+    @Autowired
+    private CargoMapper cargoMapper = null;
+    @Autowired
+    private ContainerMapper containerMapper = null;
 
     @RequestMapping("/1")
     @ResponseBody
@@ -61,4 +73,17 @@ public class TestController {
         /// CargoAttr cargoAttr = cargoAttrMapper.getCargoAttrById(10000001,new RowBounds());
         return cargoAttr;
     }
+    @RequestMapping("/getcargo1")
+    @ResponseBody
+    public List<Cargo> cargo1(){
+        List<Cargo> cargos = cargoMapper.getCargos(null,null,null,null,null,new RowBounds());
+        return cargos;
+    }
+    @RequestMapping("/container1")
+    @ResponseBody
+    public List<Cargo> container1(){
+        List<Cargo> cargos = cargoMapper.getCargoById(10000001,new RowBounds());
+        return cargos;
+    }
+
 }

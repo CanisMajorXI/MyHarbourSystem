@@ -55,7 +55,7 @@ public interface CargoMapper {
      * @param rowBounds
      * @return
      */
-    List<Cargo> getargoById(@Param("id") Integer id, RowBounds rowBounds);
+    List<Cargo> getCargoById(@Param("id") Integer id, RowBounds rowBounds);
 
     /**
      * @param cargo
