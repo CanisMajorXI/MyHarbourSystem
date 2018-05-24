@@ -14,13 +14,13 @@ public interface CargoMapper {
 
     /**
      * cargo
-     英/'kɑːgəʊ/  美/'kɑrɡo/  全球(美国)
-     简明 朗文 柯林斯 21世纪 例句 百科
-     n. 货物，船货
-     n. (Cargo)人名；(英、西)卡戈
-     复数 cargos或cargoes
-     考研 | CET4 | GRE | GMAT | 商务英语 | TOEFL
-
+     * 英/'kɑːgəʊ/  美/'kɑrɡo/  全球(美国)
+     * 简明 朗文 柯林斯 21世纪 例句 百科
+     * n. 货物，船货
+     * n. (Cargo)人名；(英、西)卡戈
+     * 复数 cargos或cargoes
+     * 考研 | CET4 | GRE | GMAT | 商务英语 | TOEFL
+     *
      * @param cargoId
      * @param cargoTypeId
      * @param gross
@@ -30,18 +30,19 @@ public interface CargoMapper {
      */
     //不加valid默认查询所有valid为true(1)的列！
     List<Cargo> getCargos(@Param("cargoId") Integer cargoId,
-                               @Param("userId") Integer userId,
-                               @Param("cargoTypeId") Integer cargoTypeId,
-                               @Param("gross") Integer gross,
-                               @Param("containerId") Integer containerId,
-                               RowBounds rowBounds);
+                          @Param("userId") Integer userId,
+                          @Param("cargoTypeId") Integer cargoTypeId,
+                          @Param("gross") Integer gross,
+                          @Param("containerId") Integer containerId,
+                          RowBounds rowBounds);
 
     /**
-     *
      * @param containerId
      * @return
      */
-    List<ResultantCargoInfo> getResultantCargoInfoByContainerId(Integer containerId);
+    List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(@Param("containerId") Integer containerId,
+                                                                  @Param("containerType") Integer containerType);
+
     /**
      * @param cargoId
      * @param cargoTypeId

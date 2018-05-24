@@ -54,6 +54,8 @@ public class Container {
 
     private Boolean valid;
 
+    //private Boolean is
+
     public Integer getContainerId() {
         return containerId;
     }

@@ -39,8 +39,9 @@ public class QueryServiceImpl implements QueryService {
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
-    public List<ResultantCargoInfo> getResultantCargoInfoByContainerId(Integer containerId) {
-        return cargoMapper.getResultantCargoInfoByContainerId(containerId);
+    public List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(Integer containerId, Integer containerType) {
+
+        return cargoMapper.getResultantCargoInfoBySpecificParas(containerId,containerType);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)

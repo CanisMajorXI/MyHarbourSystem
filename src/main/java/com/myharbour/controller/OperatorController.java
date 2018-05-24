@@ -72,7 +72,7 @@ public class OperatorController {
         ModelAndView modelAndView = new ModelAndView();
         if (id == null) return modelAndView;
         try {
-            List<ResultantCargoInfo> list = queryService.getResultantCargoInfoByContainerId(id);
+            List<ResultantCargoInfo> list = queryService.getResultantCargoInfoBySpecificParas(id, null);
             // List<Cargo> list = queryService.getCargosByContainerId(id);
             modelMap.addAttribute("cargos", list);
             modelAndView.setView(new MappingJackson2JsonView());
@@ -83,11 +83,15 @@ public class OperatorController {
         }
     }
 
-    @RequestMapping("/get/cargos")
-    public ModelAndView getCargo(HttpSession session) {
+    @RequestMapping("/get/bulk-cargos")
+    public ModelAndView getCargo(@RequestParam(name = "type", required = false) Integer containerType,
+                                 ModelMap modelMap) {
         ModelAndView modelAndView = new ModelAndView();
+        if (containerType != null && !(containerType == 0 || containerType == 1 || containerType == 2))
+            return modelAndView;
         try {
-            //todo
+            List<ResultantCargoInfo> resultantCargoInfos = queryService.getResultantCargoInfoBySpecificParas(null, containerType);
+            modelMap.addAttribute("cargos", resultantCargoInfos);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
         } catch (Exception e) {

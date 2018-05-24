@@ -48,7 +48,8 @@ public interface QueryService {
      * @param containerId
      * @return
      */
-    List<ResultantCargoInfo> getResultantCargoInfoByContainerId(Integer containerId);
+    List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(Integer containerId,Integer containerType);
+
 //    /**
 //     * @return 获取所有的在仓库外的箱子
 //     */

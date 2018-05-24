@@ -46,23 +46,29 @@
             AND container_id = #{containerId}
         </if>
     </select>
-    <select id="getResultantCargoInfoByContainerId" resultMap="cargoInfo" parameterType="int">
+    <select id="getResultantCargoInfoBySpecificParas" resultMap="cargoInfo">
         SELECT
-            cargo_table.cargo_id           AS 1_cargo_id,
-            cargo_table.user_id            AS 1_user_id,
-            cargo_table.cargo_type_id      AS 1_cargo_type_id,
-            cargo_table.gross              AS 1_gross,
-            cargo_table.container_id       AS 1_container_id,
-            cargo_table.valid              AS 1_valid,
-            cargo_attr_table.cargo_type_id AS 2_cargo_type_id,
-            cargo_attr_table.cargo_name    AS 2_cargo_name,
-            cargo_attr_table.unit_type     AS 2_unit_type,
-            cargo_attr_table.valid         AS 2_valid
+        cargo_table.cargo_id AS 1_cargo_id,
+        cargo_table.user_id AS 1_user_id,
+        cargo_table.cargo_type_id AS 1_cargo_type_id,
+        cargo_table.gross AS 1_gross,
+        cargo_table.container_id AS 1_container_id,
+        cargo_table.valid AS 1_valid,
+        cargo_attr_table.cargo_type_id AS 2_cargo_type_id,
+        cargo_attr_table.cargo_name AS 2_cargo_name,
+        cargo_attr_table.container_type AS 2_container_type,
+        cargo_attr_table.unit_type AS 2_unit_type,
+        cargo_attr_table.valid AS 2_valid
         FROM cargo_table, cargo_attr_table
-        WHERE container_id = #{containerId}
-              AND cargo_table.cargo_type_id = cargo_attr_table.cargo_type_id
-              AND cargo_table.valid = 1 AND cargo_attr_table.valid = 1
-
+        WHERE
+        cargo_table.cargo_type_id = cargo_attr_table.cargo_type_id
+        AND cargo_table.valid = 1 AND cargo_attr_table.valid = 1
+        <if test="containerId != null">
+            AND container_id = #{containerId}
+        </if>
+        <if test="containerType != null">
+            AND container_type = #{containerType}
+        </if>
     </select>
     <select id="getInvalidCargos" resultMap="cargo">
         SELECT * FROM cargo_table WHERE valid = 0
