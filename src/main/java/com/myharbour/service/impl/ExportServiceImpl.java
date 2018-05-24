@@ -21,13 +21,8 @@ public class ExportServiceImpl implements ExportService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
     public void exportAContainer(Integer containerId) {
-        Cargo cargo = new Cargo();
-        cargo.setValid(false);
-        cargo.setContainerId(containerId);
-        cargoMapper.updateCargo(cargo);
-        Container container = new Container();
-        container.setValid(false);
-        container.setContainerId(containerId);
-        containerMapper.updateContainer(container);
+        cargoMapper.updateCargoToInvalidByContainerId(containerId);
+       containerMapper.updateContainerToInvalidById(containerId);
+
     }
 }

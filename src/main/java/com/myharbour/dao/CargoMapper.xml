@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.myharbour.dao.CargoMapper">
-    <resultMap id = "cargo" type="cargo">
+    <resultMap id="cargo" type="cargo">
         <id property="cargoId" column="cargo_id"/>
         <result property="userId" column="user_id"/>
         <result property="cargoTypeId" column="cargo_type_id"/>
@@ -14,21 +14,21 @@
 
     <select id="getCargos" resultMap="cargo">
         SELECT * FROM cargo_table WHERE valid = 1
-            <if test="cargoId != null">
-                AND cargo_id = #{cargoId}
-            </if>
+        <if test="cargoId != null">
+            AND cargo_id = #{cargoId}
+        </if>
         <if test="userId != null">
             AND user_id = #{userId}
         </if>
-            <if test="cargoTypeId != null">
-                AND cargo_type_id = #{cargoTypeId}
-            </if>
-            <if test="gross != null">
-                AND gross = #{gross}
-            </if>
-            <if test="containerId != null">
-                AND container_id = #{containerId}
-            </if>
+        <if test="cargoTypeId != null">
+            AND cargo_type_id = #{cargoTypeId}
+        </if>
+        <if test="gross != null">
+            AND gross = #{gross}
+        </if>
+        <if test="containerId != null">
+            AND container_id = #{containerId}
+        </if>
     </select>
 
     <select id="getInvalidCargos" resultMap="cargo">
@@ -51,11 +51,13 @@
     </select>
 
     <select id="getCargoById" resultMap="cargo">
-        SELECT * FROM cargo_table WHERE valid = 1 AND cargo_id = #{id}
+        SELECT *
+        FROM cargo_table
+        WHERE valid = 1 AND cargo_id = #{id}
     </select>
 
     <insert id="insertCargo" parameterType="cargo">
-        INSERT into cargo_table VALUES (#{cargoId},#{userId},#{cargoTypeId},#{gross},#{containerId},1)
+        INSERT INTO cargo_table VALUES (#{cargoId}, #{userId}, #{cargoTypeId}, #{gross}, #{containerId}, 1)
     </insert>
 
     <update id="updateCargo" parameterType="cargo">
@@ -78,5 +80,11 @@
             </if>
         </trim>
         WHERE cargo_id = #{cargoId}
+    </update>
+
+    <update id=" updateCargoToInvalidByContainerId" parameterType="int">
+        UPDATE cargo_table
+        SET valid = 0
+        WHERE container_id = #{containerId}
     </update>
 </mapper>

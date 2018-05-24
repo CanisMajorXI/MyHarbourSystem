@@ -9,11 +9,16 @@ import com.myharbour.pojo.Container;
 import com.myharbour.service.ExportService;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -99,4 +104,16 @@ public class TestController {
         containerMapper.updateContainer(container);
         return true;
     }
+
+//    @RequestMapping("/test")
+//
+//    public String test(HttpServletRequest servletRequest,ModelMap modelMap) {
+//        System.out.println(servletRequest.getRequestURL());
+//        ModelAndView modelAndView = new ModelAndView();
+//    //    ModelMap modelMap = new ModelMap();
+//        modelMap.addAttribute("jzm","1926");
+//        modelAndView.setView(new MappingJackson2JsonView());
+//        return  modelAndView;
+//        //System.out.println(servletRequest.getAttribute("jzm"));
+//    }
 }

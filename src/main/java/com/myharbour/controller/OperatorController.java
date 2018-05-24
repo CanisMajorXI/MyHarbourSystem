@@ -5,6 +5,7 @@ import com.myharbour.pojo.Container;
 import com.myharbour.service.ExportService;
 import com.myharbour.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,8 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 @Controller
@@ -93,7 +96,7 @@ public class OperatorController {
 
     @RequestMapping("/export/container")
     public boolean exportAContainer(@RequestParam("id") Integer containerId) {
-        if (containerId == null) return false;
+        if(containerId == null) return false;
         try {
             exportService.exportAContainer(containerId);
             return true;

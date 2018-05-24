@@ -67,5 +67,5 @@ public interface CargoMapper {
      */
     void updateCargo(Cargo cargo);
 
-    void updateCargoToInValid();
+    void updateCargoToInvalidByContainerId(Integer containerId);
 }

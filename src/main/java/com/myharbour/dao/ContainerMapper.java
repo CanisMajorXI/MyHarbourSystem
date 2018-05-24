@@ -67,4 +67,6 @@ public interface ContainerMapper {
      * @param container
      */
     void updateContainer(Container container);
+
+    void  updateContainerToInvalidById(Integer containerId);
 }
