@@ -3,6 +3,7 @@ package com.myharbour.service;
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
 import com.myharbour.pojo.ContainersAndTotalPages;
+import com.myharbour.pojo.ResultantCargoInfo;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface QueryService {
      */
     List<Cargo> getCargosByContainerId(int containerId);
 //
+
+
 //    /**
 //     * @return 获取所有散货
 //     */
@@ -40,7 +43,12 @@ public interface QueryService {
                                                  Integer area,
                                                  int page);
 
-
+    /**
+     *
+     * @param containerId
+     * @return
+     */
+    List<ResultantCargoInfo> getResultantCargoInfoByContainerId(Integer containerId);
 //    /**
 //     * @return 获取所有的在仓库外的箱子
 //     */

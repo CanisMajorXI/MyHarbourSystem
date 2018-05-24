@@ -2,6 +2,7 @@ package com.myharbour.controller;
 
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
+import com.myharbour.pojo.ResultantCargoInfo;
 import com.myharbour.service.ExportService;
 import com.myharbour.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,8 @@ public class OperatorController {
         ModelAndView modelAndView = new ModelAndView();
         if (id == null) return modelAndView;
         try {
-            List<Cargo> list = queryService.getCargosByContainerId(id);
+            List<ResultantCargoInfo> list = queryService.getResultantCargoInfoByContainerId(id);
+            // List<Cargo> list = queryService.getCargosByContainerId(id);
             modelMap.addAttribute("cargos", list);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
@@ -95,8 +97,9 @@ public class OperatorController {
     }
 
     @RequestMapping("/export/container")
+    @ResponseBody
     public boolean exportAContainer(@RequestParam("id") Integer containerId) {
-        if(containerId == null) return false;
+        if (containerId == null) return false;
         try {
             exportService.exportAContainer(containerId);
             return true;

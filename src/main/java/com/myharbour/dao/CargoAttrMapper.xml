@@ -4,7 +4,7 @@
 
 <mapper namespace="com.myharbour.dao.CargoAttrMapper">
     <resultMap id="cargoattr" type="cargoattr">
-        <result property="cargoTypeId" column="cargo_type_id"/>
+        <id property="cargoTypeId" column="cargo_type_id"/>
         <result property="cargoName" column="cargo_name"/>
         <result property="containerType" column="container_type"/>
         <result property="unitType" column="unit_type"/>
@@ -75,4 +75,6 @@
         </trim>
         WHERE cargo_type_id = #{cargoTypeId}
     </update>
+    
+    
 </mapper>

@@ -4,6 +4,7 @@ import com.myharbour.dao.CargoMapper;
 import com.myharbour.dao.ContainerMapper;
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
+import com.myharbour.pojo.ResultantCargoInfo;
 import com.myharbour.service.QueryService;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,11 @@ public class QueryServiceImpl implements QueryService {
                 null, type, size, new RowBounds()).size();
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public List<ResultantCargoInfo> getResultantCargoInfoByContainerId(Integer containerId) {
+        return cargoMapper.getResultantCargoInfoByContainerId(containerId);
+    }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override

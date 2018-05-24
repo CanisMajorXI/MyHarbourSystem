@@ -11,7 +11,23 @@
         <result property="containerId" column="container_id"/>
         <result property="valid" column="valid"/>
     </resultMap>
-
+    <resultMap id="cargoInfo" type="resultantcargoinfo">
+        <association property="cargo" javaType="com.myharbour.pojo.Cargo">
+            <id property="cargoId" column="1_cargo_id"/>
+            <result property="userId" column="1_user_id"/>
+            <result property="cargoTypeId" column="1_cargo_type_id"/>
+            <result property="gross" column="1_gross"/>
+            <result property="containerId" column="1_container_id"/>
+            <result property="valid" column="1_valid"/>
+        </association>
+        <association property="cargoAttr" javaType="com.myharbour.pojo.CargoAttr">
+            <id property="cargoTypeId" column="2_cargo_type_id"/>
+            <result property="cargoName" column="2_cargo_name"/>
+            <result property="containerType" column="2_container_type"/>
+            <result property="unitType" column="2_unit_type"/>
+            <result property="valid" column="2_valid"/>
+        </association>
+    </resultMap>
     <select id="getCargos" resultMap="cargo">
         SELECT * FROM cargo_table WHERE valid = 1
         <if test="cargoId != null">
@@ -30,7 +46,24 @@
             AND container_id = #{containerId}
         </if>
     </select>
+    <select id="getResultantCargoInfoByContainerId" resultMap="cargoInfo" parameterType="int">
+        SELECT
+            cargo_table.cargo_id           AS 1_cargo_id,
+            cargo_table.user_id            AS 1_user_id,
+            cargo_table.cargo_type_id      AS 1_cargo_type_id,
+            cargo_table.gross              AS 1_gross,
+            cargo_table.container_id       AS 1_container_id,
+            cargo_table.valid              AS 1_valid,
+            cargo_attr_table.cargo_type_id AS 2_cargo_type_id,
+            cargo_attr_table.cargo_name    AS 2_cargo_name,
+            cargo_attr_table.unit_type     AS 2_unit_type,
+            cargo_attr_table.valid         AS 2_valid
+        FROM cargo_table, cargo_attr_table
+        WHERE container_id = #{containerId}
+              AND cargo_table.cargo_type_id = cargo_attr_table.cargo_type_id
+              AND cargo_table.valid = 1 AND cargo_attr_table.valid = 1
 
+    </select>
     <select id="getInvalidCargos" resultMap="cargo">
         SELECT * FROM cargo_table WHERE valid = 0
         <if test="cargoId != null">
@@ -82,7 +115,7 @@
         WHERE cargo_id = #{cargoId}
     </update>
 
-    <update id=" updateCargoToInvalidByContainerId" parameterType="int">
+    <update id="updateCargoToInvalidByContainerId" parameterType="int">
         UPDATE cargo_table
         SET valid = 0
         WHERE container_id = #{containerId}

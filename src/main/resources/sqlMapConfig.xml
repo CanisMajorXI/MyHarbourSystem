@@ -20,6 +20,7 @@
         <typeAlias alias="container" type="com.myharbour.pojo.Container"/>
         <typeAlias alias="cargo" type="com.myharbour.pojo.Cargo"/>
         <typeAlias alias="cargoattr"  type="com.myharbour.pojo.CargoAttr" />
+        <typeAlias alias="resultantcargoinfo" type="com.myharbour.pojo.ResultantCargoInfo"/>
     </typeAliases>
     <mappers>
         <package name="com.myharbour.pojo"/>

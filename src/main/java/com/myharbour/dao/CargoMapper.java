@@ -1,6 +1,7 @@
 package com.myharbour.dao;
 
 import com.myharbour.pojo.Cargo;
+import com.myharbour.pojo.ResultantCargoInfo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
@@ -35,6 +36,12 @@ public interface CargoMapper {
                                @Param("containerId") Integer containerId,
                                RowBounds rowBounds);
 
+    /**
+     *
+     * @param containerId
+     * @return
+     */
+    List<ResultantCargoInfo> getResultantCargoInfoByContainerId(Integer containerId);
     /**
      * @param cargoId
      * @param cargoTypeId

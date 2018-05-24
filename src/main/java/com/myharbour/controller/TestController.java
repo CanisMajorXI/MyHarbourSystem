@@ -6,6 +6,7 @@ import com.myharbour.dao.ContainerMapper;
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.CargoAttr;
 import com.myharbour.pojo.Container;
+import com.myharbour.pojo.ResultantCargoInfo;
 import com.myharbour.service.ExportService;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class TestController {
 
     @RequestMapping("/1")
     @ResponseBody
-    public CargoAttr test() {
+    public CargoAttr test1() {
        CargoAttr cargoAttr = cargoAttrMapper.getCargoAttrById(10000001,new RowBounds());
        return cargoAttr;
     }
@@ -105,15 +106,9 @@ public class TestController {
         return true;
     }
 
-//    @RequestMapping("/test")
-//
-//    public String test(HttpServletRequest servletRequest,ModelMap modelMap) {
-//        System.out.println(servletRequest.getRequestURL());
-//        ModelAndView modelAndView = new ModelAndView();
-//    //    ModelMap modelMap = new ModelMap();
-//        modelMap.addAttribute("jzm","1926");
-//        modelAndView.setView(new MappingJackson2JsonView());
-//        return  modelAndView;
-//        //System.out.println(servletRequest.getAttribute("jzm"));
-//    }
+    @RequestMapping("/test")
+    @ResponseBody
+    public List<ResultantCargoInfo> test() {
+        return cargoMapper.getResultantCargoInfoByContainerId(10000003);
+    }
 }

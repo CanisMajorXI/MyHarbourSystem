@@ -16,6 +16,8 @@ public class ExportServiceImpl implements ExportService {
 
     @Autowired
     private ContainerMapper containerMapper = null;
+
+    @Autowired
     private CargoMapper cargoMapper = null;
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
