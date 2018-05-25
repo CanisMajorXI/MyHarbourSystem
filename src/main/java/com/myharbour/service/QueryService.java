@@ -13,6 +13,7 @@ public interface QueryService {
      */
 //    Container getContainerById(int containerId);
 //
+
     /**
      * @param containerId
      * @return 根据箱子Id返回该箱子中的货物，小箱子最多有一份货物，大箱子可以有1份或者两份货物
@@ -43,11 +44,12 @@ public interface QueryService {
                                                  int page);
 
     /**
-     *
      * @param containerId
      * @return
      */
-    List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(Integer containerId,Integer containerType);
+    List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(Integer containerId,
+                                                                  Integer containerType,
+                                                                  int page);
 
 //    /**
 //     * @return 获取所有的在仓库外的箱子

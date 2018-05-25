@@ -39,15 +39,22 @@ public class QueryServiceImpl implements QueryService {
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
-    public List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(Integer containerId, Integer containerType) {
+    public List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(Integer containerId,
+                                                                         Integer containerType,
+                                                                         int page) {
 
-        return cargoMapper.getResultantCargoInfoBySpecificParas(containerId,containerType);
+        int limit = 9;//前端一页显示的数量
+        RowBounds rowBounds = page == 0 ? new RowBounds() : new RowBounds((page - 1) * limit, limit);
+        return cargoMapper.getResultantCargoInfoBySpecificParas(containerId, containerType, rowBounds);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
-    public List<Container> getContainersBySpecificParas(Integer size, Integer type, Integer area, int page) {
-        int limit = 9;
+    public List<Container> getContainersBySpecificParas(Integer size,
+                                                        Integer type,
+                                                        Integer area,
+                                                        int page) {
+        int limit = 9;//前端一页显示的数量
         RowBounds rowBounds = new RowBounds((page - 1) * limit, limit);
         return containerMapper.getContainersWithEmptyStatus(null, area, null, null, null,
                 null, type, size, rowBounds);

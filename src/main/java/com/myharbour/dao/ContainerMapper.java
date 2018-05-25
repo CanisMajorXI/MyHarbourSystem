@@ -38,6 +38,20 @@ public interface ContainerMapper {
                                        @Param("size") Integer size
             , RowBounds rowBounds);
 
+    /**
+     *
+     * @param containerId
+     * @param containerArea
+     * @param userId
+     * @param row
+     * @param column
+     * @param layer
+     * @param type
+     * @param size
+     * @param rowBounds
+     * @return
+     */
+    //查询箱子的同时返回箱子的空满情况
     List<Container> getContainersWithEmptyStatus(@Param("containerId") Integer containerId,
                                                  @Param("containerArea") Integer containerArea,
                                                  @Param("userId") Integer userId,
