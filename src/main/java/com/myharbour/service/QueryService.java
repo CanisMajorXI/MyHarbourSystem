@@ -2,7 +2,6 @@ package com.myharbour.service;
 
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
-import com.myharbour.pojo.ContainersAndTotalPages;
 import com.myharbour.pojo.ResultantCargoInfo;
 
 import java.util.List;

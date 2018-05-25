@@ -38,6 +38,16 @@ public interface ContainerMapper {
                                        @Param("size") Integer size
             , RowBounds rowBounds);
 
+    List<Container> getContainersWithEmptyStatus(@Param("containerId") Integer containerId,
+                                                 @Param("containerArea") Integer containerArea,
+                                                 @Param("userId") Integer userId,
+                                                 @Param("row") Integer row,
+                                                 @Param("column") Integer column,
+                                                 @Param("layer") Integer layer,
+                                                 @Param("type") Integer type,
+                                                 @Param("size") Integer size
+            , RowBounds rowBounds);
+
     List<Container> getInvalidContainers(@Param("containerId") Integer containerId,
                                          @Param("containerArea") Integer containerArea,
                                          @Param("userId") Integer userId,

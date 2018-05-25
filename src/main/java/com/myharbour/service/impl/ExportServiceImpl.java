@@ -24,7 +24,7 @@ public class ExportServiceImpl implements ExportService {
     @Override
     public void exportAContainer(Integer containerId) {
         cargoMapper.updateCargoToInvalidByContainerId(containerId);
-       containerMapper.updateContainerToInvalidById(containerId);
+        containerMapper.updateContainerToInvalidById(containerId);
 
     }
 }

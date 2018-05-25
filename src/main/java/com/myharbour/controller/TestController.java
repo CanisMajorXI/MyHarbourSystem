@@ -106,9 +106,11 @@ public class TestController {
         return true;
     }
 
-//    @RequestMapping("/test")
-//    @ResponseBody
-//    public List<ResultantCargoInfo> test() {
-//        //return cargoMapper.getResultantCargoInfoByContainerId(10000003);
-//    }
+    @RequestMapping("/test")
+    @ResponseBody
+    public List<Container> test() {
+       return containerMapper.getContainersWithEmptyStatus(null,null,
+               null,null,null,null,null
+               ,null,new RowBounds());
+    }
 }

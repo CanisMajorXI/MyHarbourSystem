@@ -49,7 +49,7 @@ public class QueryServiceImpl implements QueryService {
     public List<Container> getContainersBySpecificParas(Integer size, Integer type, Integer area, int page) {
         int limit = 9;
         RowBounds rowBounds = new RowBounds((page - 1) * limit, limit);
-        return containerMapper.getContainers(null, area, null, null, null,
+        return containerMapper.getContainersWithEmptyStatus(null, area, null, null, null,
                 null, type, size, rowBounds);
     }
 }

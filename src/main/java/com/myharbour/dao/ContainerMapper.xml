@@ -13,6 +13,7 @@
         <result property="type" column="container_type"/>
         <result property="size" column="container_size"/>
         <result property="valid" column="valid"/>
+        <result property="emptyStatus" column="empty_status"/>
     </resultMap>
 
     <select id="getContainers" resultMap="container">
@@ -41,6 +42,41 @@
         <if test="size != null">
             AND container_size = #{size}
         </if>
+    </select>
+
+    <select id="getContainersWithEmptyStatus" resultMap="container">
+        SELECT
+            container_table.*,
+            count(gross) * (2 - container_size) AS empty_status
+        FROM container_table
+            LEFT JOIN cargo_table
+                ON cargo_table.container_id = container_table.container_id AND cargo_table.valid = 1
+        WHERE container_table.valid = 1
+        <if test="containerId != null">
+            AND container_table.container_id = #{containerId}
+        </if>
+        <if test="containerArea != null">
+            AND container_table.container_area = #{containerArea}
+        </if>
+        <if test="userId != null">
+            AND container_table.user_id = #{userId}
+        </if>
+        <if test="row != null">
+            AND container_table.container_row = #{row}
+        </if>
+        <if test="column != null">
+            AND container_table.container_column = #{column}
+        </if>
+        <if test="layer != null">
+            AND container_table.container_layer = #{layer}
+        </if>
+        <if test="type != null">
+            AND container_table.container_type= #{type}
+        </if>
+        <if test="size != null">
+            AND container_table.container_size = #{size}
+        </if>
+        GROUP BY container_table.container_id
     </select>
 
     <select id="getInvalidContainers" resultMap="container">

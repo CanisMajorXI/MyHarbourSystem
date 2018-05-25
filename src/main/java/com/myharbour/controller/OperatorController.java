@@ -50,14 +50,9 @@ public class OperatorController {
                                       @RequestParam(name = "area", required = false) Integer containerArea,
                                       @RequestParam(name = "page", required = true) Integer page, ModelMap modelMap) {
         ModelAndView modelAndView = new ModelAndView();
-        //   if (page == null || page < 1) return modelAndView;
+        if (page < 1) return modelAndView;
         try {
             List<Container> list = queryService.getContainersBySpecificParas(containerSize, containerType, containerArea, page);
-//            for (Container container : list) {
-//                if(container.getContainerArea() == Container.AREA_TASK) {
-//                    container.setRow(0);
-//                }
-//            }
             modelMap.addAttribute("containers", list);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;

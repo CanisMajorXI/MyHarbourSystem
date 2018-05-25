@@ -36,6 +36,11 @@ public class Container {
     public static final boolean STATUS_VALID = true;
     public static final boolean STATUS_INVALID = false;
 
+    //箱子中货物的情况，空，半满，全满
+    public static final int STATUS_EMPTY = 0;
+    public static final int STATUS_HALFfULL = 1;
+    public static final int STATUS_ALLfULL = 2;
+
     private Integer containerId;
 
     private Integer containerArea;
@@ -53,6 +58,8 @@ public class Container {
     private Integer size;
 
     private Boolean valid;
+
+    private Integer emptyStatus;
 
     //private Boolean is
 
@@ -128,4 +135,11 @@ public class Container {
         this.valid = valid;
     }
 
+    public Integer getEmptyStatus() {
+        return emptyStatus;
+    }
+
+    public void setEmptyStatus(Integer emptyStatus) {
+        this.emptyStatus = emptyStatus;
+    }
 }
