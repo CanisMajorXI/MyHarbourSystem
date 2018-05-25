@@ -113,7 +113,7 @@
         WHERE valid = 1 AND container_id = #{id}
     </select>
 
-    <insert id="insertContainer" parameterType="container">
+    <insert id="insertContainer" useGeneratedKeys="true"  keyProperty="containerId" parameterType="container">
         INSERT INTO container_table
         VALUES (#{containerId}, #{containerArea}, #{userId}, #{row}, #{column}, #{layer}, #{type}, #{size}, 1)
     </insert>

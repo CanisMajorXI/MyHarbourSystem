@@ -1,5 +1,6 @@
 package com.myharbour.controller;
 
+import com.myharbour.pojo.Container;
 import com.myharbour.pojo.ResultantCargoAttr;
 import com.myharbour.pojo.User;
 import com.myharbour.service.CargoAttrService;
@@ -91,7 +92,6 @@ public class ShipperController {
     }
 
     /**
-     *
      * @param type
      * @param size
      * @param amount
@@ -101,6 +101,7 @@ public class ShipperController {
      * @param gross2
      * @return
      */
+    //http://localhost:8080/api/shipper/add/container-with-cargos?type=0&size=1&amount=2&cargo_type1=10000099&cargo_type2=10000099&gross1=199&gross2=211
     @RequestMapping("/add/container-with-cargos")
     @ResponseBody
     public boolean addContainerWithCargo(@RequestParam("type") Integer type,
@@ -109,14 +110,32 @@ public class ShipperController {
                                          @RequestParam("cargo_type1") Integer cargoType1,
                                          @RequestParam(value = "cargo_type2", required = false) Integer cargoType2,
                                          @RequestParam("gross1") Integer gross1,
-                                         @RequestParam(value = "gross2", required = false) Integer gross2) {
+                                         @RequestParam(value = "gross2", required = false) Integer gross2,
+                                         HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getType() != User.TYPE_SHIPPER) return false;
         if (type == null || size == null || amount == null || cargoType1 == null || gross1 == null) return false;
+        if (!(type == Container.TYPE_ORDINARY ||
+                type == Container.TYPE_FREEZE ||
+                type == Container.AREA_HAZARD)) return false;
         if (!(amount == 1 || amount == 2)) return false;
-        //todo
-        if (size == 1 && amount == 2) return false;
-        if ((size == 1 && gross2 != null)) return false;
+        if (!(size == Container.SIZE_SMALL || size == Container.SIZE_LARGE)) return false;
+        if (size == Container.SIZE_SMALL && amount == 2) return false;
+        if ((size == Container.SIZE_SMALL && cargoType2 != null)) return false;
+        if ((size == Container.SIZE_SMALL && gross2 != null)) return false;
+        if (size == Container.SIZE_LARGE && cargoType2 == null) return false;
+        if (size == Container.SIZE_LARGE && gross2 == null) return false;
+        Integer[] cargoTypes = new Integer[2];
+        Integer[] grosses = new Integer[2];
+        cargoTypes[0] = cargoType1;
+        grosses[0] = gross1;
+        if (size == Container.SIZE_LARGE) {
+            cargoTypes[1] = cargoType2;
+            grosses[1] = gross2;
+        }
+
         try {
-            //todo
+            submitService.submitAContainerWithCargos(user.getUserId(), type, size, amount, cargoTypes, grosses);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

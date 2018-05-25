@@ -16,8 +16,10 @@ public interface SubmitService {
 
     //货主提交一个带货的箱子
     void submitAContainerWithCargos(Integer userId,
+                                    Integer containerType,
                                     Integer size,
-                                    Integer cargo_type, Integer amount, Integer... gross);
+                                    Integer amount,
+                                    Integer[] cargoTypes, Integer[] grosses);
 
     /*散货 /sǎn huò/
 简明 新汉英 现代汉语 例句 百科

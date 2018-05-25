@@ -44,10 +44,9 @@ public interface CargoAttrMapper {
     /**
      *
      * @param id
-     * @param rowBounds
      * @return
      */
-    CargoAttr getCargoAttrById(@Param("id") Integer id, RowBounds rowBounds);
+    CargoAttr getCargoAttrById(@Param("id") Integer id);
 
     /**
      *
