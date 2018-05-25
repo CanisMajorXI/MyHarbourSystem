@@ -41,7 +41,7 @@ public class TestController {
     @RequestMapping("/1")
     @ResponseBody
     public CargoAttr test1() {
-       CargoAttr cargoAttr = cargoAttrMapper.getCargoAttrById(10000001,new RowBounds());
+       CargoAttr cargoAttr = cargoAttrMapper.getCargoAttrById(10000001);
        return cargoAttr;
     }
     @RequestMapping("/2")
