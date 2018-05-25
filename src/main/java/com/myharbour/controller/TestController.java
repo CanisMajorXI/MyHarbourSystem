@@ -8,6 +8,7 @@ import com.myharbour.pojo.CargoAttr;
 import com.myharbour.pojo.Container;
 import com.myharbour.pojo.ResultantCargoInfo;
 import com.myharbour.service.ExportService;
+import com.myharbour.service.InsertablePositionService;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -33,6 +34,8 @@ public class TestController {
     private ContainerMapper containerMapper = null;
     @Autowired
     private ExportService exportService = null;
+    @Autowired
+    private InsertablePositionService insertablePositionService = null;
 
 
     @RequestMapping("/1")
@@ -108,9 +111,8 @@ public class TestController {
 
     @RequestMapping("/test")
     @ResponseBody
-    public List<Container> test() {
-       return containerMapper.getContainersWithEmptyStatus(null,null,
-               null,null,null,null,null
-               ,null,new RowBounds());
+    public boolean test(@RequestParam("id")Integer id) {
+        insertablePositionService.getInsertablePosition(id);
+        return true;
     }
 }

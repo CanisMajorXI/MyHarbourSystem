@@ -69,42 +69,58 @@ public class ShipperController {
     }
 
     /**
-     * @param cargo_type
+     * @param cargoType
+     * @param gross
+     * @param session
      * @return
      */
     @RequestMapping("/add/cargo")
     @ResponseBody
-    public Integer addCargo(@RequestParam("type") Integer cargo_type) {
+    public boolean addCargo(@RequestParam("type") Integer cargoType,
+                            @RequestParam("gross") Integer gross, HttpSession session) {
+        if (cargoType == null || gross == null) return false;
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getType() != User.TYPE_SHIPPER) return false;
         try {
-            if (cargo_type == null) return null;
-            //todo
-            return null;
+            submitService.submitBulkCargo(user.getUserId(), cargoType, gross);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
     /**
-     * @param cargo_type
+     *
+     * @param type
      * @param size
      * @param amount
+     * @param cargoType1
+     * @param cargoType2
+     * @param gross1
+     * @param gross2
      * @return
      */
-    @RequestMapping("/add/container-with-cargo")
+    @RequestMapping("/add/container-with-cargos")
     @ResponseBody
-    public String addContainerWithCargo(@RequestParam("container_type") Integer cargo_type,
-                                        @RequestParam("size") Integer size,
-                                        @RequestParam("amount") Integer amount) {
+    public boolean addContainerWithCargo(@RequestParam("type") Integer type,
+                                         @RequestParam("size") Integer size,
+                                         @RequestParam("amount") Integer amount,
+                                         @RequestParam("cargo_type1") Integer cargoType1,
+                                         @RequestParam(value = "cargo_type2", required = false) Integer cargoType2,
+                                         @RequestParam("gross1") Integer gross1,
+                                         @RequestParam(value = "gross2", required = false) Integer gross2) {
+        if (type == null || size == null || amount == null || cargoType1 == null || gross1 == null) return false;
+        if (!(amount == 1 || amount == 2)) return false;
+        //todo
+        if (size == 1 && amount == 2) return false;
+        if ((size == 1 && gross2 != null)) return false;
         try {
-            if (cargo_type == null || size == null || amount == null) return null;
-            if (!(amount == 1 || amount == 2)) return null;
-            if (size == 1 && amount == 2) return null;
             //todo
-            return null;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 

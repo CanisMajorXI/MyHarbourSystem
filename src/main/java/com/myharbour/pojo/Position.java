@@ -5,6 +5,14 @@ public class Position {
     private Integer row;
     private Integer column;
     private Integer layer;
+    private Integer area;
+
+    public Position(int row, int column, int layer, int area) {
+        this.row = row;
+        this.column = column;
+        this.layer = layer;
+        this.area = area;
+    }
 
     public Integer getRow() {
         return row;
@@ -28,5 +36,13 @@ public class Position {
 
     public void setLayer(Integer layer) {
         this.layer = layer;
+    }
+
+    public Integer getArea() {
+        return area;
+    }
+
+    public void setArea(Integer area) {
+        this.area = area;
     }
 }
