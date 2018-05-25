@@ -32,9 +32,15 @@ public class QueryServiceImpl implements QueryService {
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
-    public Integer getCountBySpecificParas(Integer size, Integer type, Integer area) {
+    public Integer getContainersCountBySpecificParas(Integer size, Integer type, Integer area) {
         return containerMapper.getContainers(null, area, null, null, null,
                 null, type, size, new RowBounds()).size();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public Integer getCargosCountByBySpecificParas(Integer containerId, Integer containerType) {
+        return cargoMapper.getCountByBySpecificParas(containerId, containerType);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)

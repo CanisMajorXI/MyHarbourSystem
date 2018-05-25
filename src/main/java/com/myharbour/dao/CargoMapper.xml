@@ -46,6 +46,23 @@
             AND container_id = #{containerId}
         </if>
     </select>
+
+    <select id="getCountByBySpecificParas" resultType="int">
+        SELECT
+       count(cargo_id)
+        FROM cargo_table, cargo_attr_table
+        WHERE
+        cargo_table.cargo_type_id = cargo_attr_table.cargo_type_id
+        AND cargo_table.valid = 1 AND cargo_attr_table.valid = 1
+        <if test="containerId != null">
+            AND container_id = #{containerId}
+        </if>
+        <if test="containerType != null">
+            AND container_type = #{containerType}
+        </if>
+    </select>
+
+
     <select id="getResultantCargoInfoBySpecificParas" resultMap="cargoInfo">
         SELECT
         cargo_table.cargo_id AS 1_cargo_id,
@@ -70,6 +87,8 @@
             AND container_type = #{containerType}
         </if>
     </select>
+
+
     <select id="getInvalidCargos" resultMap="cargo">
         SELECT * FROM cargo_table WHERE valid = 0
         <if test="cargoId != null">

@@ -22,21 +22,22 @@ public interface QueryService {
 //
 
 
-//    /**
-//     * @return 获取所有散货
-//     */
-//    List<Cargo> getBulkCargos(int page);
-//
-//    /**
-//     *
-//     * @param size
-//     * @param type
-//     * @param area
-//     * @param page
-//     * @return
-//     */
+    /**
+     * 获取箱子总数量，配合分页使用
+     * @param size
+     * @param type
+     * @param area
+     * @return
+     */
+    Integer getContainersCountBySpecificParas(Integer size, Integer type, Integer area);
 
-    Integer getCountBySpecificParas(Integer size, Integer type, Integer area);
+    /**
+     * 获取散货的总数量，配合分页使用
+     * @param containerId
+     * @param containerType
+     * @return
+     */
+    Integer getCargosCountByBySpecificParas(Integer containerId, Integer containerType);
 
     List<Container> getContainersBySpecificParas(Integer size,
                                                  Integer type,
@@ -51,10 +52,6 @@ public interface QueryService {
                                                                   Integer containerType,
                                                                   int page);
 
-//    /**
-//     * @return 获取所有的在仓库外的箱子
-//     */
-//    List<Container> getOutwardContainers();
 //
 //    /**
 //     * @return 获取所有的在仓库内的箱子
@@ -64,30 +61,5 @@ public interface QueryService {
 //     * public static final int TOTAL_ROWS_HAZARD = 6;
 //     */
 //
-//    List<Container> getInwardContainers();
-//
-//    /**
-//     *
-//     * @return
-//     */
-//    List<Container> getContainersInEmptyArea();
-//
-//    /**
-//     *
-//     * @return
-//     */
-//    List<Container> getContainersInOrdinaryArea();
-//
-//    /**
-//     *
-//     * @return
-//     */
-//    List<Container> getContainersInFreezeArea();
-//
-//    /**
-//     *
-//     * @return
-//     */
-//    List<Container> getContainersInHazardArea();
 
 }

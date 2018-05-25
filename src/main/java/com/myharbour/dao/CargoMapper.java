@@ -36,13 +36,17 @@ public interface CargoMapper {
                           @Param("containerId") Integer containerId,
                           RowBounds rowBounds);
 
+
+    Integer getCountByBySpecificParas(@Param("containerId") Integer containerId,
+                                      @Param("containerType") Integer containerType);
+
     /**
      * @param containerId
      * @return
      */
     List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(@Param("containerId") Integer containerId,
-                                                                  @Param("containerType") Integer containerType
-            , RowBounds rowBounds);
+                                                                  @Param("containerType") Integer containerType,
+                                                                  RowBounds rowBounds);
 
     /**
      * @param cargoId

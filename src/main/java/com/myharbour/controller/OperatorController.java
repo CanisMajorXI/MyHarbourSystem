@@ -31,13 +31,24 @@ public class OperatorController {
     @Autowired
     private ExportService exportService = null;
 
-    @RequestMapping("/get/count")
+    @RequestMapping("/get/containers-count")
     @ResponseBody
-    public Integer getCount(@RequestParam(name = "size", required = false) Integer containerSize,
-                            @RequestParam(name = "type", required = false) Integer containerType,
-                            @RequestParam(name = "area", required = false) Integer containerArea) {
+    public Integer getContainersCount(@RequestParam(name = "size", required = false) Integer containerSize,
+                                      @RequestParam(name = "type", required = false) Integer containerType,
+                                      @RequestParam(name = "area", required = false) Integer containerArea) {
         try {
-            return queryService.getCountBySpecificParas(containerSize, containerType, containerArea);
+            return queryService.getContainersCountBySpecificParas(containerSize, containerType, containerArea);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @RequestMapping("/get/cargos-count")
+    @ResponseBody
+    public Integer getCargosCount(@RequestParam(name = "type", required = false) Integer containerType) {
+        try {
+            return queryService.getCargosCountByBySpecificParas(null, containerType);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
