@@ -75,10 +75,9 @@ public interface ContainerMapper {
     /**
      *
      * @param id
-     * @param rowBounds
      * @return
      */
-    List<Container> getContainerById(@Param("id") Integer id, RowBounds rowBounds);
+    Container getContainerById(@Param("id") Integer id);
 
     /**
      *
