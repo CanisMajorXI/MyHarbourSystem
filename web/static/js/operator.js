@@ -839,59 +839,59 @@ $(function () {
     /**
      * 3D模型初始化函数
      */
-    startThreejs(0);
-
-    /**
-     * 获得箱子数据
-     * @returns {{type: string, dataType: string, url: string, data: {id: (*|jQuery), row: (*|jQuery), column: (*|jQuery), layer: (*|jQuery), type: (*|jQuery), size: (*|jQuery)}, success: success, error: error}}
-     */
-    function getContainers() {
-        return {
-            type: "POST",
-            dataType: "json",
-            url: "/api/container/get",
-            data: {
-                id: $("#container-id").val(),
-                row: $("#container-row").val(),
-                column: $("#container-column").val(),
-                layer: $("#container-layer").val(),
-                type: $("#container-type").val(),
-                size: $("#container-size").val()
-            },
-            success: function (result) {
-                updateThreejs(result.container);
-            },
-            error: function () {
-                alert("error!");
-            }
-        };
-    }
-
-    /**
-     * 3D模型换页函数
-     */
-    $.ajax(getContainers());
-    $("#next-area-btn").click(function () {
-        if (areatype < 3) {
-            areatype++;
-            $.get("/api/container/get", function (result) {
-                updateThreejs(result.container);
-            }, "json");
-        }
-    });
-
-    $("#prev-area-btn").click(function () {
-        if (areatype > 0) {
-            areatype--;
-            $.get("/api/container/get", function (result) {
-                updateThreejs(result.container);
-            }, "json");
-        }
-
-    });
-    $("#container-query-btn").click(function () {
-        $.ajax(getContainers());
-    });
+    // startThreejs(0);
+    //
+    // /**
+    //  * 获得箱子数据
+    //  * @returns {{type: string, dataType: string, url: string, data: {id: (*|jQuery), row: (*|jQuery), column: (*|jQuery), layer: (*|jQuery), type: (*|jQuery), size: (*|jQuery)}, success: success, error: error}}
+    //  */
+    // function getContainers() {
+    //     return {
+    //         type: "POST",
+    //         dataType: "json",
+    //         url: "/api/container/get",
+    //         data: {
+    //             id: $("#container-id").val(),
+    //             row: $("#container-row").val(),
+    //             column: $("#container-column").val(),
+    //             layer: $("#container-layer").val(),
+    //             type: $("#container-type").val(),
+    //             size: $("#container-size").val()
+    //         },
+    //         success: function (result) {
+    //             updateThreejs(result.container);
+    //         },
+    //         error: function () {
+    //             alert("error!");
+    //         }
+    //     };
+    // }
+    //
+    // /**
+    //  * 3D模型换页函数
+    //  */
+    // $.ajax(getContainers());
+    // $("#next-area-btn").click(function () {
+    //     if (areatype < 3) {
+    //         areatype++;
+    //         $.get("/api/container/get", function (result) {
+    //             updateThreejs(result.container);
+    //         }, "json");
+    //     }
+    // });
+    //
+    // $("#prev-area-btn").click(function () {
+    //     if (areatype > 0) {
+    //         areatype--;
+    //         $.get("/api/container/get", function (result) {
+    //             updateThreejs(result.container);
+    //         }, "json");
+    //     }
+    //
+    // });
+    // $("#container-query-btn").click(function () {
+    //     $.ajax(getContainers());
+    // });
     /** ----------- 3D模型函数 ---------- **/
 
 });

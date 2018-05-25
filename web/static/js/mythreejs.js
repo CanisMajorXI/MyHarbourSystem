@@ -187,7 +187,7 @@ var threejs_areas = [{
         });
     }
 
-    var containerGeometrys = [], containerHeight, materialsList = [];
+    let containerGeometrys = [], containerHeight, materialsList = [];
 
     function initContainer(length, width, height) {
         containerHeight = height;
@@ -210,20 +210,8 @@ var threejs_areas = [{
 
     }
 
-    function getRowByDatabaseRow(row) {
-        switch (areatype) {
-            case 0 :
-                return row;
-            case 1:
-                return row - 5;
-            case 2:
-                return row - 15;
-            case 3:
-                return row - 21;
-        }
-    }
 
-    var group = new THREE.Group();
+    let group = new THREE.Group();
 
     container_add = function addAContainer(row, column, layer, type, size) {
         row = row || 1;
@@ -232,7 +220,7 @@ var threejs_areas = [{
         type = type || 0;
         size = size || 0;
 
-        var container = new THREE.Mesh(containerGeometrys[size], new THREE.MeshFaceMaterial(materialsList[type * 2 + size]));
+        let container = new THREE.Mesh(containerGeometrys[size], new THREE.MeshFaceMaterial(materialsList[type * 2 + size]));
         container.position.z += unitLen / 2;
         group.add(container);
         //container.material.wireframe =true;
@@ -240,12 +228,12 @@ var threejs_areas = [{
         container.position.z += (widthSeq / 2 - row) * unitLen;
         container.position.x -= (lengthSeq / 2 - column) * unitLen - unitLen / 2 * (size - 1);
         container.position.y += containerHeight * (layer - 1);
-        var name = 'row' + row + 'column' + column + 'layer' + layer;
+        let name = 'row' + row + 'column' + column + 'layer' + layer;
         container.name = name;
     };
     container_remove = function (row, column, layer) {
-        var name = 'row' + row + 'column' + column + 'layer' + layer;
-        for (var x in group.children) {
+        let name = 'row' + row + 'column' + column + 'layer' + layer;
+        for (let x in group.children) {
             if (group.children[x].name === name) {
                 group.remove(group.children[x]);
                 break;
@@ -253,8 +241,8 @@ var threejs_areas = [{
         }
     };
     container_shift = function (row, column, layer, nrow, ncolumn, nlayer) {
-        var name = 'row' + row + 'column' + column + 'layer' + layer;
-        var nname = 'row' + nrow + 'column' + ncolumn + 'layer' + nlayer;
+        let name = 'row' + row + 'column' + column + 'layer' + layer;
+        let nname = 'row' + nrow + 'column' + ncolumn + 'layer' + nlayer;
         for (var x in group.children) {
             if (group.children[x].name === name) {
                 var con = group.children[x];
@@ -305,69 +293,47 @@ var threejs_areas = [{
         animate();
     };
 
-    updateThreejs = function (container) {
+    updateThreejs = function (containers) {
         area_shift(areatype);
-        for (var x in container) {
-            var canShow = false;
-            switch (areatype) {
-                case 0:
-                    if (container[x].row >= 1 && container[x].row <= 5) {
-                        canShow = true;
-                    }
-                    break;
-                case 1:
-                    if (container[x].row >= 6 && container[x].row <= 15) {
-                        container[x].row -= 5;
-                        canShow = true;
-                    }
-                    break;
-                case 2:
-                    if (container[x].row >= 16 && container[x].row <= 21) {
-                        container[x].row -= 15;
-                        canShow = true;
-                    }
-                    break;
-                case 3:
-                    if (container[x].row >= 22 && container[x].row <= 27) {
-                        container[x].row -= 21;
-                        canShow = true;
-                    }
-                    break;
-            }
-            if (canShow)
-                container_add(container[x].row, container[x].column, container[x].layer, container[x].type, container[x].size);
+        var x;
+        for (x in containers) {
+            container_add(containers[x].row,
+                containers[x].column,
+                containers[x].layer,
+                containers[x].type,
+                containers[x].size);
         }
     };
-    convertToDatabaseFormat = function (data) {
-
-        var canShow = false;
-        switch (areatype) {
-            case 0:
-                if (data.row >= 1 && data.row <= 5) {
-                    canShow = true;
-                }
-                break;
-            case 1:
-                if (data.row >= 1 && data.row <= 10) {
-                    data.row += 5;
-                    canShow = true;
-                }
-                break;
-            case 2:
-                if (data.row >= 1 && data.row <= 6) {
-                    data.row += 15;
-                    canShow = true;
-                }
-                break;
-            case 3:
-                if (data.row >= 1 && data.row <= 6) {
-                    data.row += 21;
-                    canShow = true;
-                }
-                break;
-        }
-        return canShow;
-    }
+    // convertToDatabaseFormat = function (data) {
+    //
+    //     var canShow = false;
+    //     switch (areatype) {
+    //         case 0:
+    //             if (data.row >= 1 && data.row <= 5) {
+    //                 canShow = true;
+    //             }
+    //             break;
+    //         case 1:
+    //             if (data.row >= 1 && data.row <= 10) {
+    //                 data.row += 5;
+    //                 canShow = true;
+    //             }
+    //             break;
+    //         case 2:
+    //             if (data.row >= 1 && data.row <= 6) {
+    //                 data.row += 15;
+    //                 canShow = true;
+    //             }
+    //             break;
+    //         case 3:
+    //             if (data.row >= 1 && data.row <= 6) {
+    //                 data.row += 21;
+    //                 canShow = true;
+    //             }
+    //             break;
+    //     }
+    //     return canShow;
+    // }
 })();
 
 

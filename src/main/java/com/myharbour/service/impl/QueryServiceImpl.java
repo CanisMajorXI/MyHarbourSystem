@@ -61,7 +61,7 @@ public class QueryServiceImpl implements QueryService {
                                                         Integer area,
                                                         int page) {
         int limit = 9;//前端一页显示的数量
-        RowBounds rowBounds = new RowBounds((page - 1) * limit, limit);
+        RowBounds rowBounds = page == 0 ? new RowBounds() : new RowBounds((page - 1) * limit, limit);
         return containerMapper.getContainersWithEmptyStatus(null, area, null, null, null,
                 null, type, size, rowBounds);
     }

@@ -18,12 +18,12 @@
     <script src="/static/js/jquery.validate.min.js?var1.14.0"></script>
     <script src="/static/js/jquery.cookie.js"></script>
 
-    <script>
+    <script type="application/javascript">
         $(function () {
             var username = $.cookie('registeruser');
             var password = $.cookie('registerpassword');
             var type = $.cookie('type');
-            if (username && password && username != null && password != null) {
+            if (username && password && username !== null && password !== null) {
                 $(".username").val(username);
                 $(".password").val(password);
                 $(".type").val(type);

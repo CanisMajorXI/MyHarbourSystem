@@ -208,5 +208,4 @@ $(document).ready(function () {
     $(".getcode").click(function () {
         $.post("/api/user/register/get/code", {email: $(".email").val()});
     });
-})
-;
+});

@@ -28,27 +28,28 @@ public class UserController {
     private static final int TYPEOFERROR = 0;
 
     /**
-     * @param idOrEmail
+     *
+     * @param username
      * @param password
+     * @param type
+     * @param session
      * @return
      */
     @RequestMapping("/login")
     @ResponseBody
-    public boolean login(@RequestParam("idoremail") String idOrEmail,
+    public boolean login(@RequestParam("username") String username,
                          @RequestParam("password") String password,
                          @RequestParam("type") Integer type,
                          HttpSession session) {
-        if (idOrEmail == null || password == null) return false;
+        if (username == null || password == null) return false;
         User user = null;
         try {
-            switch (typeOfUsername(idOrEmail)) {
+            switch (typeOfUsername(username)) {
                 case TYPEOFID:
-                    //todo
-                    user = userService.loginById(Integer.parseInt(idOrEmail), password, type);
+                    user = userService.loginById(Integer.parseInt(username), password, type);
                     break;
                 case TYPEOFEMAIL:
-                    user = userService.loginByEmail(idOrEmail, password, type);
-                    //todo
+                    user = userService.loginByEmail(username, password, type);
                     break;
             }
             System.out.println(user);
