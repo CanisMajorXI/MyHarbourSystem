@@ -124,16 +124,16 @@
              * @param pageNum
              * @param table
              */
-            function getCargoDataByPage(content, pageNum, table) {
+            function getCargoDataByPage(content, table) {
 
                 // 先清空表格内容
                 table.empty();
 
                 // 遍历添加内容
-                $.each(temContent, function (index, val) {
+                $.each(content, function (index, val) {
                     $.each(val, function (i, v) {
                         let tt;
-                        (v['cargo']['containerId'] == 'null') ? tt = "未装箱" : tt = ("已装箱，箱子id：" + v['cargo']['containerId']);
+                        (v['cargo']['containerId'] == null) ? tt = "未装箱" : tt = ("已装箱，箱子id：" + v['cargo']['containerId']);
                         let trHtml = "<tr class='my-tr'>" +
                             "<th>" + v['cargo']['cargoId'] + "</th>" +
                             "<th>" + v['cargoAttr']['cargoName'] + "</th>" +
@@ -172,7 +172,7 @@
                             // 如果箱子中并没有货物
                             if (cargoData.cargos.length <= 0) {
                                 content = "<div id='open-data'><h5 align='center'>这是一个空箱</h5>" +
-                                    "<button class='btn btn-info'>移动箱子</button><button class='btn btn-warning'>移除箱子</button></div>";
+                                    "<button class='btn btn-info' id='move-container-btn'>移动箱子</button><button class='btn btn-warning' id='remove-container-btn'>移除箱子</button></div>";
 
                             } else {
                                 $.each(cargoData, function (index, val) {
@@ -468,7 +468,7 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: '/api/operator/get/count',
+                    url: '/api/operator/get/containers-count',
                     data: {
                         size: $("#search-container-size").val(),
                         type: $("#search-container-type").val(),
@@ -485,7 +485,6 @@
                 });
 
             });
-
 
             /**
              * 刷新箱子表的内容
@@ -539,7 +538,7 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: '/api/operator/get/bulk-cargos',
+                    url: '/api/operator/get/cargos-count',
                     data: {
                         type: $("#search-cargo-type").val(),
                     },
@@ -557,10 +556,7 @@
             /**
              * 刷新货物表的内容，包括换页键
              */
-            function refreshCargoTable(cargoJson) {
-                let cargoDataJson = cargoJson.cargos;
-                let totalPages = Math.ceil(cargoDataJson.length / 9);
-
+            function refreshCargoTable(totalPages) {
                 // 分页模块的代码
                 $.jqPaginator('#cargo-pagination', {
                     totalPages: totalPages,
@@ -571,7 +567,24 @@
                     page: '<li class="page"><a class="cargo-change-page" href="javascript:;">{{page}}</a></li>',
                     onPageChange: function (num, type) {
                         // 这里实现表格的刷新等功能
-                        getCargoDataByPage(cargoDataJson, cargoTable);
+                        let index = layer.load();
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            url: '/api/operator/get/bulk-cargos',
+                            data: {
+                                type: $("#search-cargo-type").val(),
+                                page: num
+                            },
+                            success: function (resultJson) {
+                                layer.close(index);
+                                getCargoDataByPage(resultJson, cargoTable);
+                            },
+                            error: function () {
+                                layer.close(index);
+                                layer.alert("表格信息请求失败");
+                            }
+                        });
                     }
                 });
             }
