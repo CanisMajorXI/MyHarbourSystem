@@ -52,6 +52,7 @@ public interface QueryService {
                                                                   Integer containerType,
                                                                   int page);
 
+    void test();
 //
 //    /**
 //     * @return 获取所有的在仓库内的箱子

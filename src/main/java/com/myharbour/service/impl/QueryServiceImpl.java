@@ -65,4 +65,9 @@ public class QueryServiceImpl implements QueryService {
         return containerMapper.getContainersWithEmptyStatus(null, area, null, null, null,
                 null, type, size, rowBounds);
     }
+
+    @Override
+    public void test() {
+
+    }
 }

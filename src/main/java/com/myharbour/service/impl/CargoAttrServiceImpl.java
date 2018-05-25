@@ -30,6 +30,7 @@ public class CargoAttrServiceImpl implements CargoAttrService {
             ResultantCargoAttr resultantCargoAttr = new ResultantCargoAttr();
             resultantCargoAttr.setCargoTypeId(cargoAttr.getCargoTypeId());
             resultantCargoAttr.setNameAndUnit("货物名称：" + cargoAttr.getCargoName() + "  单位：" + cargoAttr.getUnitType());
+            resultantCargoAttr.setContainerTypeId(cargoAttr.getContainerType());
             list.add(resultantCargoAttr);
         }
         return list;
