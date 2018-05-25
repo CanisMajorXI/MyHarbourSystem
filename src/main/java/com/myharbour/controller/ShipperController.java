@@ -1,6 +1,7 @@
 package com.myharbour.controller;
 
 import com.myharbour.pojo.ResultantCargoAttr;
+import com.myharbour.pojo.User;
 import com.myharbour.service.CargoAttrService;
 import com.myharbour.service.SubmitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,14 +53,18 @@ public class ShipperController {
      */
     @RequestMapping("/add/empty-container")
     @ResponseBody
-    public Integer addEmptyContainer(@RequestParam("type") Integer type, @RequestParam("size") Integer size, HttpSession session) {
+    public boolean addEmptyContainer(@RequestParam("type") Integer type,
+                                     @RequestParam("size") Integer size, HttpSession session) {
+        if (type == null || size == null) return false;
+        User user = (User) session.getAttribute("user");
+
+        if (user == null || user.getType() != User.TYPE_SHIPPER) return false;
         try {
-            if (type == null || size == null) return null;
-            //todo
-            return null;
+            submitService.submitAnEmptyContainer(user.getUserId(), type, size);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 

@@ -12,9 +12,10 @@ public class Container {
 
     //对应箱子在任务区还是在仓库
     public static final int AREA_TASK = -1;
-    public static final int AREA_ORDINARY = 0;
-    public static final int AREA_FREEZE = 1;
-    public static final int AREA_HAZARD = 2;
+    public static final int AREA_EMPTY = 0;
+    public static final int AREA_ORDINARY = 1;
+    public static final int AREA_FREEZE = 2;
+    public static final int AREA_HAZARD = 3;
 
     //行的范围
     public static final int TOTAL_ROWS_EMPTY = 5;

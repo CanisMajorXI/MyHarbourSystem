@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
         tempUser.setType(type);
         List<User> users = userMapper.getUsers(tempUser);
         if (users.size() == 0) return null;
+        users.get(0).setType(type);
         return users.get(0);
     }
 
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService {
         tempUser.setType(type);
         List<User> users = userMapper.getUsers(tempUser);
         if (users.size() == 0) return null;
+        users.get(0).setType(type);
         return users.get(0);
     }
 

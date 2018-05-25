@@ -46,11 +46,11 @@
 
     <select id="getContainersWithEmptyStatus" resultMap="container">
         SELECT
-            container_table.*,
-            count(gross) * (2 - container_size) AS empty_status
+        container_table.*,
+        count(gross) * (2 - container_size) AS empty_status
         FROM container_table
-            LEFT JOIN cargo_table
-                ON cargo_table.container_id = container_table.container_id AND cargo_table.valid = 1
+        LEFT JOIN cargo_table
+        ON cargo_table.container_id = container_table.container_id AND cargo_table.valid = 1
         WHERE container_table.valid = 1
         <if test="containerId != null">
             AND container_table.container_id = #{containerId}

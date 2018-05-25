@@ -1,6 +1,7 @@
 package com.myharbour.config;
 
 //import com..interceptor.LoginInterceptor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     public ViewResolver initViewResolver() {
         InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
         internalResourceViewResolver.setPrefix("/WEB-INF");
+      //internalResourceViewResolver.setContentType("text/html;charset=UTF-8");
         //internalResourceViewResolver.setSuffix(".html");
         return internalResourceViewResolver;
     }

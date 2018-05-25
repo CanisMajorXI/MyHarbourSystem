@@ -91,9 +91,9 @@
                     1: "大箱子"
                 };
                 let empty = {
-                    0:"空箱",
-                    1:"半箱",
-                    2:"满箱"
+                    0: "空箱",
+                    1: "半箱",
+                    2: "满箱"
                 };
 
                 // 先清空表格内容
@@ -109,7 +109,7 @@
                         "<th>" + val['layer'] + "</th>" +
                         "<th>" + type[val['type']] + "</th>" +
                         "<th>" + size[val['size']] + "</th>" +
-                        "<th>" + empty[val['emptyStatus']]+"</th>" +
+                        "<th>" + empty[val['emptyStatus']] + "</th>" +
                         "</tr>";
                     table.append(trHtml);
                 });
@@ -464,6 +464,7 @@
              */
             $("#search-container-btn").click(function () {
                 let index = layer.load();
+
                 $.ajax({
                     type: "POST",
                     dataType: "json",
@@ -602,17 +603,12 @@
                 return {
                     type: "POST",
                     dataType: "json",
-                    url: "/api/container/get",
+                    url: "/api/operator/get/container-view",
                     data: {
-                        id: $("#container-id").val(),
-                        row: $("#container-row").val(),
-                        column: $("#container-column").val(),
-                        layer: $("#container-layer").val(),
-                        type: $("#container-type").val(),
-                        size: $("#container-size").val()
+                        area: areatype
                     },
                     success: function (result) {
-                        updateThreejs(result.container);
+                        updateThreejs(result.containers);
                     },
                     error: function () {
                         alert("error!");
@@ -627,23 +623,15 @@
             $("#next-area-btn").click(function () {
                 if (areatype < 3) {
                     areatype++;
-                    $.get("/api/container/get", function (result) {
-                        updateThreejs(result.container);
-                    }, "json");
+                    $.ajax(getContainers());
                 }
             });
 
             $("#prev-area-btn").click(function () {
                 if (areatype > 0) {
                     areatype--;
-                    $.get("/api/container/get", function (result) {
-                        updateThreejs(result.container);
-                    }, "json");
+                    $.ajax(getContainers());
                 }
-
-            });
-            $("#container-query-btn").click(function () {
-                $.ajax(getContainers());
             });
             /** ----------- 3D模型函数 ---------- **/
 
