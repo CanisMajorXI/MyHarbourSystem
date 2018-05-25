@@ -42,6 +42,7 @@ public interface QueryService {
     List<Container> getContainersBySpecificParas(Integer size,
                                                  Integer type,
                                                  Integer area,
+                                                 Integer userId,
                                                  int page);
 
     /**
@@ -50,6 +51,7 @@ public interface QueryService {
      */
     List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(Integer containerId,
                                                                   Integer containerType,
+                                                                  Integer userId,
                                                                   int page);
 
 //

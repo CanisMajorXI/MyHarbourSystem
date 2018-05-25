@@ -2,8 +2,10 @@ package com.myharbour.controller;
 
 import com.myharbour.pojo.Container;
 import com.myharbour.pojo.ResultantCargoAttr;
+import com.myharbour.pojo.ResultantCargoInfo;
 import com.myharbour.pojo.User;
 import com.myharbour.service.CargoAttrService;
+import com.myharbour.service.QueryService;
 import com.myharbour.service.SubmitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,9 @@ public class ShipperController {
 
     @Autowired
     private SubmitService submitService = null;
+
+    @Autowired
+    private QueryService queryService = null;
 
     /**
      * @return
@@ -143,12 +148,37 @@ public class ShipperController {
         }
     }
 
-    @RequestMapping("/get/info")
-    public ModelAndView getInfo(HttpSession session) {
+    @RequestMapping("/get/containers-info")
+    public ModelAndView getContainersInfo(@RequestParam("page") Integer page, ModelMap modelMap,
+                                          HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
+        if (page == null || page < 1) return modelAndView;
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getType() != User.TYPE_SHIPPER) return modelAndView;
         try {
-            Integer id = (Integer) session.getAttribute("id");
-            //todo
+            List<Container> containers = queryService.
+                    getContainersBySpecificParas(null, null, null, user.getUserId(), page);
+            modelMap.addAttribute("containers", containers);
+            modelAndView.setView(new MappingJackson2JsonView());
+            return modelAndView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return modelAndView;
+        }
+    }
+
+    @RequestMapping("/get/cargos-info")
+    public ModelAndView getCargosInfo(@RequestParam("page") Integer page, ModelMap modelMap,
+                                      HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        if (page == null || page < 1) return modelAndView;
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getType() != User.TYPE_SHIPPER) return modelAndView;
+        try {
+            List<ResultantCargoInfo> list = queryService.
+                    getResultantCargoInfoBySpecificParas(null,
+                            null, user.getUserId(), page);
+            modelMap.addAttribute("cargos", list);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
         } catch (Exception e) {
@@ -157,11 +187,3 @@ public class ShipperController {
         }
     }
 }
-/*
-*    try {
-
-            return true;
-        }catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }*/

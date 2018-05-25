@@ -46,6 +46,7 @@ public interface CargoMapper {
      */
     List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(@Param("containerId") Integer containerId,
                                                                   @Param("containerType") Integer containerType,
+                                                                  @Param(("userId")) Integer userId,
                                                                   RowBounds rowBounds);
 
     /**

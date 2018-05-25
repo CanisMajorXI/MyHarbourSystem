@@ -47,11 +47,12 @@ public class QueryServiceImpl implements QueryService {
     @Override
     public List<ResultantCargoInfo> getResultantCargoInfoBySpecificParas(Integer containerId,
                                                                          Integer containerType,
+                                                                         Integer userId,
                                                                          int page) {
 
         int limit = 9;//前端一页显示的数量
         RowBounds rowBounds = page == 0 ? new RowBounds() : new RowBounds((page - 1) * limit, limit);
-        return cargoMapper.getResultantCargoInfoBySpecificParas(containerId, containerType, rowBounds);
+        return cargoMapper.getResultantCargoInfoBySpecificParas(containerId, containerType,userId, rowBounds);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
@@ -59,10 +60,11 @@ public class QueryServiceImpl implements QueryService {
     public List<Container> getContainersBySpecificParas(Integer size,
                                                         Integer type,
                                                         Integer area,
+                                                        Integer userId,
                                                         int page) {
         int limit = 9;//前端一页显示的数量
         RowBounds rowBounds = page == 0 ? new RowBounds() : new RowBounds((page - 1) * limit, limit);
-        return containerMapper.getContainersWithEmptyStatus(null, area, null, null, null,
+        return containerMapper.getContainersWithEmptyStatus(null, area, userId, null, null,
                 null, type, size, rowBounds);
     }
 }

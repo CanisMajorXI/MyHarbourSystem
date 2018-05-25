@@ -63,7 +63,7 @@ public class OperatorController {
                 || area == Container.AREA_FREEZE
                 || area == Container.AREA_HAZARD)) return modelAndView;
         try {
-            List<Container> list = queryService.getContainersBySpecificParas(null, null, area, 0);
+            List<Container> list = queryService.getContainersBySpecificParas(null, null, area, null, 0);
             modelMap.addAttribute("containers", list);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
@@ -81,7 +81,7 @@ public class OperatorController {
         ModelAndView modelAndView = new ModelAndView();
         if (page < 1) return modelAndView;
         try {
-            List<Container> list = queryService.getContainersBySpecificParas(containerSize, containerType, containerArea, page);
+            List<Container> list = queryService.getContainersBySpecificParas(containerSize, containerType, containerArea, null, page);
             modelMap.addAttribute("containers", list);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
@@ -96,7 +96,7 @@ public class OperatorController {
         ModelAndView modelAndView = new ModelAndView();
         if (id == null) return modelAndView;
         try {
-            List<ResultantCargoInfo> list = queryService.getResultantCargoInfoBySpecificParas(id, null, 0);
+            List<ResultantCargoInfo> list = queryService.getResultantCargoInfoBySpecificParas(id, null,null, 0);
             // List<Cargo> list = queryService.getCargosByContainerId(id);
             modelMap.addAttribute("cargos", list);
             modelAndView.setView(new MappingJackson2JsonView());
@@ -117,7 +117,7 @@ public class OperatorController {
         if (containerType != null && !(containerType == 0 || containerType == 1 || containerType == 2))
             return modelAndView;
         try {
-            List<ResultantCargoInfo> resultantCargoInfos = queryService.getResultantCargoInfoBySpecificParas(null, containerType, page);
+            List<ResultantCargoInfo> resultantCargoInfos = queryService.getResultantCargoInfoBySpecificParas(null, containerType,null, page);
             modelMap.addAttribute("cargos", resultantCargoInfos);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
