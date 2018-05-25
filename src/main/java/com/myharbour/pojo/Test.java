@@ -7,27 +7,30 @@ public class Test {
 
     public static void main(String[] args) {
         int type = 0;
-        int size;
+        int size = 0;
 
-        int[][][] a = new int[2][3][4];
-        System.out.println(a[1][1][1]);
-        switch (type) {
-            case 1:
-                a = new int[5][10][5];
-                break;
-            case 2:
-                a = new int[10][20][5];
-                break;
-            case 3:
-                a = new int[6][10][5];
-                break;
-            case 4:
-                a = new int[6][10][5];
-                break;
+        Area area = new Area(5, 5, 5, 1);
+        int[][][] arr = area.getArrSituation();
+        arr[0][0][0] = 1;
+        arr[1][0][0] = 1;
+        arr[0][0][1] = 1;
+        arr[0][0][2] = 1;
+        arr[0][0][3] = 1;
+        arr[0][0][4] = 1;
+        arr[0][1][0] = 1;
+        arr[0][1][1] = 1;
+        arr[1][2][0] = 1;
+        List<MyPosition> list;
+        Test test = new Test();
+        list = test.getInsertableMyPosition(area, 0);
+        System.out.println(list.size());
+        for (MyPosition p : list
+                ) {
+            System.out.println(p);
         }
     }
 
-    public class Position {
+    static class MyPosition {
         // 行
         int row;
         // 列
@@ -37,18 +40,20 @@ public class Test {
         // 区域 0-3
         int area;
 
-        public Position(int row, int column, int layer, int area) {
+        public MyPosition(int row, int column, int layer, int area) {
             this.row = row;
             this.column = column;
             this.layer = layer;
             this.area = area;
         }
+
+        @Override
+        public String toString() {
+            return this.row + ":" + this.column + ":" + this.layer;
+        }
     }
 
-    /**
-     * 区域类，包含箱子数组和区域的行列层数
-     */
-    public class Area {
+    static class Area {
 
         int[][][] arrSituation;
         int areaRow;
@@ -101,30 +106,46 @@ public class Test {
         public int getArea() {
             return area;
         }
+
     }
 
-    private List<Position> getInsertablePosition(Area area, int size) {
-        List<Position> list = new ArrayList<>();
+    private List<MyPosition> getInsertableMyPosition(Area area, int size) {
+        List<MyPosition> list = new ArrayList<>();
         int[][][] arr = area.getArrSituation();
         for (int i = 0; i < area.getAreaRow(); i++) {
             for (int j = 0; j < area.getAreaColumn(); j++) {
                 for (int k = 0; k < area.getAreaLayer(); k++) {
-                    if (arr[i][j][k] == 0){
 
-                        if (size == 0){// 小箱子直接插入
-                            list.add(new Position(i+1,j+1,k+1,area.getArea()));
-                        }else{ // 对于大箱子需要判断右面是否为空
-                            if (arr[i][j+1][k] == 0){
-                                list.add(new Position(i+1,j+1,k+1,area.getArea()));
+                    if (arr[i][j][k] == 0 ) {
+                        if (size == 0) {// 小箱子
+                            if (k == 0) { // 如果是一层可以直接插入
+                                list.add(new MyPosition(i + 1, j + 1, k + 1, area.getArea()));
+                                continue;
+                            }else if (arr[i][j][k-1] == 1){ // 如果不是一层就判断下面是否有
+                                list.add(new MyPosition(i + 1, j + 1, k + 1, area.getArea()));
+                                continue;
+                            }else {
+                                continue;
+                            }
+                        } else { // 对于大箱子需要判断右面是否为空
+                            if (arr[i][j + 1][k] == 0 && k == 0) {
+                                list.add(new MyPosition(i + 1, j + 1, k + 1, area.getArea()));
+                                continue;
+                            } else if (arr[i][j + 1][k] == 0 && k != 0) {
+                                if (arr[i][j + 1][k - 1] == 1&&arr[i][j][k-1] == 1) {
+                                    list.add(new MyPosition(i + 1, j + 1, k + 1, area.getArea()));
+                                    continue;
+                                }
+                            }else{
+                                continue;
                             }
                         }
-                    }else if (arr[i][j][k] == 1){
-
+                    } else if (arr[i][j][k] == 1) {
+                        continue;
                     }
                 }
             }
         }
-
         return list;
     }
 
