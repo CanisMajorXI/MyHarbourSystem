@@ -41,25 +41,26 @@
                 $("#submit-empty-container-btn").click(function () {
                     let index = layer.load();
                     let data = {
-                        containerid:1211111,
-                        type:$("#type").val(),
-                        size:$("#size").val()
+                        type: $("#type").val(),
+                        size: $("#size").val()
                     };
                     let func = function (result) {
-                        if (result == true){
+                        if (result == true) {
                             layer.close(index);
-                            layer.alert("空箱插入成功");
-                        }else {
+                            layer.alert("空箱提交成功");
+                        } else {
                             layer.close(index);
-                            layer.alert("空箱插入失败");
+                            layer.alert("空箱提交失败");
                         }
+                        layer.close(index-1);
                     };
                     let func2 = function () {
                         layer.close(index);
-                        layer.alert("空箱插入失败");
+                        layer.alert("空箱提交失败");
+                        layer.close(index-1);
                     };
-                    let url = "/api/fr/addempty";
-                   $.ajax(getAjaxData(url,data,func,func2));
+                    let url = "/api/shipper/add/empty-container";
+                    $.ajax(getAjaxData(url, data, func, func2));
                 });
             });
 
@@ -67,7 +68,13 @@
              * 提交满货箱
              */
             $("#submit-full-container").click(function () {
+                $.get("/api/shipper/get/cargoattrs", function (cargoAttrs) {
+
+                });
+
+
                 let content;
+
                 content = "<div id=\"\">\n" +
                     "    <div id=\"top\">\n" +
                     "        <label class='control-label'>选择类型：</label><select id=\"type\" class='select'>\n" +
@@ -86,6 +93,7 @@
                     "        <input type=\"text\" >\n" +
                     "    </div>\n" +
                     "</div>";
+
                 layer.open({
                     type: 1,
                     title: "请选择箱子类型",
@@ -94,48 +102,50 @@
                     skin: 'layui-layer-molv',
                     content: content
                 });
-                $("#submit-empty-container-btn").click(function () {
+
+                $("#submit-full-container-btn").click(function () {
                     let data = {
-                        userid:1111,
-                        containerid:12111,
-                        type:$("#type").val(),
-                        size:$("#size").val()
+                        userid: 1111,
+                        containerid: 12111,
+                        type: $("#type").val(),
+                        size: $("#size").val()
                     };
                     let func = function (result) {
-                        if (result == true){
+                        if (result == true) {
                             alert("空箱插入成功");
-                        }else {
+                        } else {
                             alert("空箱插入失败");
                         }
                     };
                     let url = "/api/sh/addempty";
-                    $.ajax(getAjaxData(url,data,func));
+                    $.ajax(getAjaxData(url, data, func));
                 });
             });
 
             /**
-             * 插入货物按钮 OK
+             * 提交散货 OK
              */
             $("#submit-cargo").click(function () {
                 let typeJson;
                 let content;
-
+                let index1 = layer.load();
                 // 构建html
-                content = "<div id=\"empty-container-selector\">\n" +
-                    "    <label class='control-label'>选择类型：</label><select class='select' id='type'>";
+                content = "<div id='bulk-cargo-selector'>\n" +
+                    "    <div class='bulk-cargo-selector-item'><label class='control-label'>选择类型：</label><select class='select' id='type'>";
                 // ajax获得类型
-                $.get("/api/sh/getnameandunit",function (result) {
-
+                $.get("/api/shipper/get/cargoattrs", function (result) {
+                    layer.close(index1);
                     typeJson = result;
-                    $.each(typeJson.nameandunit,function (index,val) {
-                        content+="<option value='"+val['id']+"'>"+val['nameAndUnit']+"</option>";
+                    $.each(typeJson.cargoAttrs, function (index, val) {
+                        content += "<option value='" + val['cargoTypeId'] + "'>" + val['nameAndUnit'] + "</option>";
                     });
                     // 构建html
-                    content +="</select><label class='control-label'>输入数量：</label><input type='text' class='text-primary' id='gross'>"+
-                    "<button class='btn btn-primary' id='submit-cargo-btn'>提交箱子</button>" +
-                    "</div> </select>";
+                    content += "</select></div><div class='bulk-cargo-selector-item'><label class='control-label'>输入数量：</label><input type='text' class='text-primary' id='gross'></div>" +
+                        "<div class='bulk-cargo-selector-item'><button class='btn btn-primary' id='submit-cargo-btn'>提交箱子</button></div>" +
+                        "</div> </select>";
 
                     layer.open({
+                        area: ['400px', '300px'],
                         type: 1,
                         title: "请选择货物属性",
                         closeBtn: 1,
@@ -147,16 +157,15 @@
                     $("#submit-cargo-btn").click(function () {
                         let index = layer.load();
                         let data = {
-                            userid:123,
-                            typeid:$("#type").val(),
-                            gross:$("#gross").val()
+                            type: $("#type").val(),
+                            gross: $("#gross").val()
                         };
                         let func = function (result) {
-                            if (result == true){
+                            if (result == true) {
                                 layer.close(index);
                                 layer.alert("货物提交成功");
                                 layer.close(1);
-                            }else {
+                            } else {
                                 layer.close(index);
                                 layer.alert("货物提交失败");
                             }
@@ -166,14 +175,14 @@
                             layer.alert("货物提交失败");
                         };
                         // ajax添加货物
-                        let url = "/api/sh/addcargo";
-                        $.ajax(getAjaxData(url,data,func,func2));
+                        let url = "/api/shipper/add/cargo";
+                        $.ajax(getAjaxData(url, data, func, func2));
                     });
                 });
 
             });
 
-            function getAjaxData(url, data, func,func2) {
+            function getAjaxData(url, data, func, func2) {
                 return {
                     type: "POST",
                     dataType: "json",
@@ -271,6 +280,15 @@
             position: relative;
         }
 
+        .bulk-cargo-selector-item{
+            height: 70px;
+            margin: 20px;
+        }
+        .bulk-cargo-selector-item button{
+            position: relative;
+            left: 120px;
+        }
+
         #empty-container-selector {
             padding: 20px;
         }
@@ -349,7 +367,7 @@
             padding: 10%;
         }
 
-        .left-button button{
+        .left-button button {
             position: relative;
             top: -80px;
             left: -80px;
