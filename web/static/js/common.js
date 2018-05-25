@@ -1,13 +1,13 @@
-﻿//打开字滑入效果
+﻿﻿//打开字滑入效果
 window.onload = function () {
     $(".connect p").eq(0).animate({"left": "0%"}, 600)
         .eq(1).animate({"left": "0%"}, 400);
 };
 //jquery.validate表单验证
 $(document).ready(function () {
-    const TL = 300;
-    const pattern = /[0-9a-zA-Z_]+(\.[0-9a-zA-Z_]+)*@[0-9a-zA-Z_]+(\.[0-9a-zA-Z_]+)+/;
-    let countdown = TL;
+    let TL = 300;
+    let pattern = /[0-9a-zA-Z_]+(\.[0-9a-zA-Z_]+)*@[0-9a-zA-Z_]+(\.[0-9a-zA-Z_]+)+/;
+    var countdown = TL;
 
     function invokeSettime(obj) {
         settime(obj);
@@ -45,7 +45,7 @@ $(document).ready(function () {
             },
             password: {
                 required: true,
-                rangelength: [6, 20]
+                rangelength:[6,20]
             },
         },
         //错误信息提示
@@ -68,7 +68,7 @@ $(document).ready(function () {
                 data: {
                     username: $(".username").val(),
                     password: $(".password").val(),
-                    type: $(".type").val()
+                    type:$(".type").val()
                 },
                 success: function (result) {
                     if (result && result === 'true')
@@ -171,9 +171,9 @@ $(document).ready(function () {
         },
         onkeyup: false,
         submitHandler: function (form) {
-            var username = $(".username").val();
-            var password = $(".password").val();
-            var type = $(".type").val();
+            var username =  $(".username").val();
+            var password =   $(".password").val();
+            var type =   $(".type").val();
             $.ajax({
                 type: "POST",
                 dataType: "text",

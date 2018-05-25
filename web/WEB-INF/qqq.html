@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link type="text/css" rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/3.1.1/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="../static/js/jquery.min.js"></script>
+    <script src="../static/jqPaginator-1.2.1/src/js/jqPaginator.js"></script>
+
+
+</head>
+<body>
+<p id="p1"></p>
+<ul class="pagination" id="pagination1"></ul>
+<script>
+    // 测试
+
+
+    $('#pagination1').jqPaginator({
+        totalPages: 1,
+        visiblePages: 10,
+        currentPage: 1,
+
+        first: '<li class="first"><a href="javascript:void(0);">First</a></li>',
+        prev: '<li class="prev"><a href="javascript:void(0);">Previous</a></li>',
+        next: '<li class="next"><a href="javascript:void(0);">Next</a></li>',
+        last: '<li class="last"><a href="javascript:void(0);">Last</a></li>',
+        page: '<li class="page"><a href="javascript:void(0);">{{page}}</a></li>',
+
+        onPageChange: function (num) {
+            $('#text').html('当前第' + num + '页');
+        }
+
+    });
+</script>
+<p id="p2"></p>
+<ul class="pagination" id="pagination2"></ul>
+</body>
+</html>

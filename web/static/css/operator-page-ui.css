@@ -1,0 +1,200 @@
+
+body {
+    background-image: url("../img/1.jpg");
+    position: relative;
+}
+
+#open-data-cargo{
+    padding: 20px;
+}
+
+#open-data-button button{
+    margin: 20px;
+}
+
+#open-data {
+    padding: 20px;
+}
+
+#open-data button {
+    margin: 5px;
+}
+
+#container-selectable-position {
+    padding: 40px;
+}
+
+.container-selectable-position-btn {
+    margin: 10px;
+    width: 80px;
+}
+
+#warpper {
+    border: 2px solid black;
+    width: 100%;
+    height: 1400px;
+    padding: 20px;
+    position: relative;
+}
+
+.my-table-warpper {
+    border-radius: 50px;
+    float: left;
+    border: 2px solid blue;
+    width: 45%;
+    height: 40%;
+    position: relative;
+    margin-left: 3%;
+    top: 10%;
+    margin-bottom: 50px;
+}
+
+.mengban {
+    background-color: #FFFFFF;
+    border-radius: 50px;
+    opacity: 0.5;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+}
+
+.my-canvas-warpper {
+    float: left;
+    width: 85%;
+    height: 45%;
+    position: relative;
+    left: 7%;
+    top: 10%;
+    margin-bottom: 50px;
+}
+
+.tools {
+    position: relative;
+    top: -100%;
+    left: 5%;
+    width: 90%;
+    height: 15%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    /*border: 2px solid red;*/
+}
+
+.tools-block {
+    display: block;
+    width: 15%;
+    height: 80%;
+    /*border: 2px solid blue;*/
+    float: right;
+    position: relative;
+    top: 10%;
+    margin-right: 5%;
+}
+
+.tools-block select {
+    position: relative;
+    height: 60%;
+    width: 90%;
+    left: 5%;
+    top: 20%;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.tools-block button {
+    position: relative;
+    height: 80%;
+    width: 80%;
+    left: 10%;
+    top: 10%;
+    border-radius: 10px;
+}
+
+.my-table {
+    position: relative;
+    border-radius: 40px;
+    top: -100%;
+    left: 5%;
+    width: 90%;
+    height: 60%;
+    border: 2px solid red;
+    padding-left: 5%;
+}
+
+.pagination-warpper {
+    position: relative;
+    top: -100%;
+    left: 18%;
+}
+
+table.altrowstable {
+    position: relative;
+    top: 5%;
+    width: 90%;
+    height: 90%;
+    font-family: verdana, arial, sans-serif;
+    font-size: 11px;
+    color: #333333;
+    border-width: 2px;
+    border-color: #000000;
+    border-collapse: collapse;
+}
+
+table.altrowstable th {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #1abc9c;
+}
+
+table.altrowstable td {
+    padding: 7px;
+}
+
+.oddrowcolor {
+    background-color: #d4e3e5;
+}
+
+.evenrowcolor {
+    background-color: #c3dde0;
+}
+
+.mouseoverColor {
+    background-color: #c29d0b;
+}
+
+.threejscontainer {
+    position: relative;
+    left: 5%;
+    top: 5%;
+    width: 90%;
+    height: 80%;
+}
+
+div#canvas-frame {
+    border: 3px solid darkcyan;
+    cursor: pointer;
+    width: 80%;
+    height: 100%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #72D1FF;
+}
+
+#canvas-button {
+    position: relative;
+    left: 5%;
+    top: 5%;
+    width: 90%;
+    height: 10%;
+}
+
+#prev-area-btn {
+    position: relative;
+    left: 25%;
+}
+
+#next-area-btn {
+    position: relative;
+    left: 50%;
+}
+

@@ -3,6 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.myharbour.dao.CargoAttrMapper">
+    <!--resultMap-->
     <resultMap id="cargoattr" type="cargoattr">
         <id property="cargoTypeId" column="cargo_type_id"/>
         <result property="cargoName" column="cargo_name"/>
@@ -10,7 +11,11 @@
         <result property="unitType" column="unit_type"/>
         <result property="valid" column="valid"/>
     </resultMap>
+    <resultMap id="cargo" type="cargo">
+        <id property="cargoId" column="cargo_id"/>
+    </resultMap>
 
+    <!---->
     <select id="getCargoAttrs" resultMap="cargoattr">
         SELECT * FROM cargo_attr_table WHERE valid = 1
         <if test="cargoTypeId != null">

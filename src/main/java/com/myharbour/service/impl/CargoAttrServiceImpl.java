@@ -24,8 +24,7 @@ public class CargoAttrServiceImpl implements CargoAttrService {
     @Override
     public List<ResultantCargoAttr> getCargoAttrs() {
         CargoAttr cargoAttr1 = new CargoAttr();
-        // cargoAttr1.setCargoTypeId(11111111);
-        List<CargoAttr> cargoAttrs = cargoAttrMapper.getCargoAttrs(null, null, null, null,new RowBounds());
+        List<CargoAttr> cargoAttrs = cargoAttrMapper.getCargoAttrs(null, null, null, null);
         List<ResultantCargoAttr> list = new ArrayList<>();
         for (CargoAttr cargoAttr : cargoAttrs) {
             ResultantCargoAttr resultantCargoAttr = new ResultantCargoAttr();

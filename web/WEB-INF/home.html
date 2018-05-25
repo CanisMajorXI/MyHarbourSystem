@@ -6,12 +6,188 @@
     <link href="../static/css/flat-ui.min.css" rel="stylesheet">
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../static/layer-v3.1.1/layer/layer.js"></script>
     <script src="/static/js/three.js"></script>
     <script src="/static/js/OrbitControls.js"></script>
     <script src="/static/js/Detector.js"></script>
     <script src="/static/js/mythreejs.js"></script>
     <script>
         $(function () {
+            /**
+             * 提交空箱子 OK*
+             */
+            $("#submit-empty-container").click(function () {
+                let content;
+                content = "<div id=\"empty-container-selector\">\n" +
+                    "    <label class='control-label'>选择类型：</label><select class='select' id=\"type\">\n" +
+                    "        <option value=\"0\">普通箱</option>\n" +
+                    "        <option value=\"1\">冷冻箱</option>\n" +
+                    "        <option value=\"2\">危险箱</option>\n" +
+                    "    </select>\n" +
+                    "    <label class='control-label'>选择型号：</label><select  class='select' id=\"size\">\n" +
+                    "        <option value=\"0\">小箱子</option>\n" +
+                    "        <option value=\"1\">大箱子</option>\n" +
+                    "    </select>\n" +
+                    "    <button class='btn btn-primary' id='submit-empty-container-btn'>提交箱子</button>\n" +
+                    "</div>";
+                layer.open({
+                    type: 1,
+                    title: "请选择箱子类型",
+                    closeBtn: 1,
+                    shadeClose: true,
+                    skin: 'layui-layer-molv',
+                    content: content
+                });
+                $("#submit-empty-container-btn").click(function () {
+                    let index = layer.load();
+                    let data = {
+                        containerid:1211111,
+                        type:$("#type").val(),
+                        size:$("#size").val()
+                    };
+                    let func = function (result) {
+                        if (result == true){
+                            layer.close(index);
+                            layer.alert("空箱插入成功");
+                        }else {
+                            layer.close(index);
+                            layer.alert("空箱插入失败");
+                        }
+                    };
+                    let func2 = function () {
+                        layer.close(index);
+                        layer.alert("空箱插入失败");
+                    };
+                    let url = "/api/fr/addempty";
+                   $.ajax(getAjaxData(url,data,func,func2));
+                });
+            });
+
+            /**
+             * 提交满货箱
+             */
+            $("#submit-full-container").click(function () {
+                let content;
+                content = "<div id=\"\">\n" +
+                    "    <div id=\"top\">\n" +
+                    "        <label class='control-label'>选择类型：</label><select id=\"type\" class='select'>\n" +
+                    "            <option value=\"0\">普通箱</option>\n" +
+                    "            <option value=\"1\">冷冻箱</option>\n" +
+                    "            <option value=\"2\">危险箱</option>\n" +
+                    "        </select>\n" +
+                    "         <label class='control-label'>选择大小：</label><select id=\"size\">\n" +
+                    "            <option value=\"0\">小箱子</option>\n" +
+                    "            <option value=\"1\">大箱子</option>\n" +
+                    "        </select>\n" +
+                    "        <button>提交箱子</button>\n" +
+                    "    </div>\n" +
+                    "    <div id=\"bottom\">\n" +
+                    "        <input type=\"checkbox\" >\n" +
+                    "        <input type=\"text\" >\n" +
+                    "    </div>\n" +
+                    "</div>";
+                layer.open({
+                    type: 1,
+                    title: "请选择箱子类型",
+                    closeBtn: 1,
+                    shadeClose: true,
+                    skin: 'layui-layer-molv',
+                    content: content
+                });
+                $("#submit-empty-container-btn").click(function () {
+                    let data = {
+                        userid:1111,
+                        containerid:12111,
+                        type:$("#type").val(),
+                        size:$("#size").val()
+                    };
+                    let func = function (result) {
+                        if (result == true){
+                            alert("空箱插入成功");
+                        }else {
+                            alert("空箱插入失败");
+                        }
+                    };
+                    let url = "/api/sh/addempty";
+                    $.ajax(getAjaxData(url,data,func));
+                });
+            });
+
+            /**
+             * 插入货物按钮 OK
+             */
+            $("#submit-cargo").click(function () {
+                let typeJson;
+                let content;
+
+                // 构建html
+                content = "<div id=\"empty-container-selector\">\n" +
+                    "    <label class='control-label'>选择类型：</label><select class='select' id='type'>";
+                // ajax获得类型
+                $.get("/api/sh/getnameandunit",function (result) {
+
+                    typeJson = result;
+                    $.each(typeJson.nameandunit,function (index,val) {
+                        content+="<option value='"+val['id']+"'>"+val['nameAndUnit']+"</option>";
+                    });
+                    // 构建html
+                    content +="</select><label class='control-label'>输入数量：</label><input type='text' class='text-primary' id='gross'>"+
+                    "<button class='btn btn-primary' id='submit-cargo-btn'>提交箱子</button>" +
+                    "</div> </select>";
+
+                    layer.open({
+                        type: 1,
+                        title: "请选择货物属性",
+                        closeBtn: 1,
+                        shadeClose: true,
+                        skin: 'layui-layer-molv',
+                        content: content
+                    });
+
+                    $("#submit-cargo-btn").click(function () {
+                        let index = layer.load();
+                        let data = {
+                            userid:123,
+                            typeid:$("#type").val(),
+                            gross:$("#gross").val()
+                        };
+                        let func = function (result) {
+                            if (result == true){
+                                layer.close(index);
+                                layer.alert("货物提交成功");
+                                layer.close(1);
+                            }else {
+                                layer.close(index);
+                                layer.alert("货物提交失败");
+                            }
+                        };
+                        let func2 = function () {
+                            layer.close(index);
+                            layer.alert("货物提交失败");
+                        };
+                        // ajax添加货物
+                        let url = "/api/sh/addcargo";
+                        $.ajax(getAjaxData(url,data,func,func2));
+                    });
+                });
+
+            });
+
+            function getAjaxData(url, data, func,func2) {
+                return {
+                    type: "POST",
+                    dataType: "json",
+                    url: url,
+                    data: data,
+                    success: function (result) {
+                        func(result);
+                    },
+                    error: function () {
+                        func2();
+                    }
+                };
+            }
+
             startThreejs(0);
 
             function getContainers() {
@@ -58,6 +234,7 @@
                     }
                 };
             }
+
             $.ajax(getContainers());
             $("#next-area-btn").click(function () {
                 if (areatype < 3) {
@@ -94,45 +271,40 @@
             position: relative;
         }
 
+        #empty-container-selector {
+            padding: 20px;
+        }
+
+        #empty-container-selector button {
+            position: relative;
+            left: 120px;
+        }
+
         div#back-color-wrapper {
             background-color: #FFFFFF;
             width: 80%;
-            height: 120%;
+            height: 100%;
             position: absolute;
             left: 10%;
             opacity: 0.5;
             z-index: -1;
             border: 2px solid;
             border-radius: 50px;
-       }
+        }
 
         div#back-wrapper {
-            position: absolute;
-            height: 100%;
-            left: 10%;
-            top: 50px;
-        }
-
-        div#form-container {
             position: relative;
-            width: 30%;
-            height: 20%;
+            height: 100%;
+            border: 2px solid blue;
         }
 
-        div#form-container {
-            align-content: center;
-            text-align: center;
-            height: 60%;
-        }
-
-        div#form-container input{
+        div#form-container input {
             margin: 5px;
         }
 
-        div#form-container label{
+        div#form-container label {
             text-align: left;
         }
-
 
         h1#redsun-title {
             text-align: center;
@@ -155,16 +327,41 @@
             top: 220px;
         }
 
-        #prev-area-btn{
+        #prev-area-btn {
             position: relative;
             top: 20px;
             left: -200px;
         }
 
-        #next-area-btn{
+        #next-area-btn {
             position: relative;
             top: 20px;
             left: -80px;
+        }
+
+        #left {
+            position: relative;
+            top: 13%;
+            left: 15%;
+            /*border: 2px solid red;*/
+            height: 60%;
+            width: 20%;
+            padding: 10%;
+        }
+
+        .left-button button{
+            position: relative;
+            top: -80px;
+            left: -80px;
+            margin: 20px;
+        }
+
+        #my-title {
+
+        }
+
+        #right {
+            float: right;
         }
 
 
@@ -174,103 +371,22 @@
 
 <div id="back-color-wrapper"></div>
 <div id="back-wrapper">
-    <h1 id="redsun-title">欢迎来到红太阳港口管理系统</h1>
-    <div class="nostyle-container">
-        <div id="form-container">
-            <div id="find-container">
-                <h5>查询指定箱子</h5>
-                <form class="form-inline" role="form">
-                    <div class="form-group">
-                        <label for="container-id">id</label>
-                        <input type="number" class="form-control" id="container-id" autocomplete="off"
-                               placeholder="请输入8位数id">
-                    </div>
-                    <div class="form-group">
-                        <label for="container-row">行</label>
-                        <input type="number" class="form-control" id="container-row" autocomplete="off"
-                               placeholder="请输入行数">
-                    </div>
-                    <div class="form-group">
-                        <label for="container-column">列</label>
-                        <input type="number" class="form-control" id="container-column" autocomplete="off"
-                               placeholder="请输入行数">
-                    </div>
-                    <div class="form-group">
-                        <label for="container-layer">层</label>
-                        <input type="number" class="form-control" id="container-layer" autocomplete="off"
-                               placeholder="请输入行数">
-                    </div>
-                    <div class="form-group">
-                        <label for="container-type">箱子种类</label>
-                        <select class="form-control" id="container-type">
-                            <option value selected>所有</option>
-                            <option value="0">普通箱</option>
-                            <option value="1">冷冻箱</option>
-                            <option value="2">危险箱</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="container-size">箱子尺寸</label>
-                        <select class="form-control" id="container-size">
-                            <option value selected>所有</option>
-                            <option value="0">小</option>
-                            <option value="1">大</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-hg btn-primary" id="container-query-btn">查询</button>
-                    </div>
-                </form>
-            </div>
-            <div id="insert-container">
-                <h5>插入指定箱子</h5>
-                <form class="form-inline" role="form">
-                    <div class="form-group">
-                        <label for="container-add-id">id</label>
-                        <input type="number" class="form-control" id="container-add-id" autocomplete="off"
-                               placeholder="请输入8位数id">
-                    </div>
-                    <div class="form-group">
-                        <label for="container-add-row">行</label>
-                        <input type="number" class="form-control" id="container-add-row" autocomplete="off"
-                               placeholder="请输入行数">
-                    </div>
-                    <div class="form-group">
-                        <label for="container-add-column">列</label>
-                        <input type="number" class="form-control" id="container-add-column" autocomplete="off"
-                               placeholder="请输入行数">
-                    </div>
-                    <div class="form-group">
-                        <label for="container-add-layer">层</label>
-                        <input type="number" class="form-control" id="container-add-layer" autocomplete="off"
-                               placeholder="请输入行数">
-                    </div>
-                    <div class="form-group">
-                        <label for="container-add-type">箱子种类</label>
-                        <select class="form-control" id="container-add-type">
-                            <option value="0">普通箱子</option>
-                            <option value="1">冷冻箱</option>
-                            <option value="2">危险箱</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="container-add-size">箱子尺寸</label>
-                        <select class="form-control" id="container-add-size">
-                            <option value="0">小</option>
-                            <option value="1">大</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-hg btn-primary" id="container-add-btn">插入箱子</button>
-                    </div>
-                </form>
-            </div>
+    <div id="my-title">
+        <h1 id="redsun-title">欢迎来到红太阳港口管理系统</h1>
+    </div>
+    <div id="left">
+        <div class="left-button">
+            <button class="btn btn-hg btn-primary" id="submit-empty-container">提交空箱</button>
+        </div>
+        <div class="left-button">
+            <button class="btn btn-hg btn-primary" id="submit-full-container">提交货箱</button>
+        </div>
+        <div class="left-button">
+            <button class="btn btn-hg btn-primary" id="submit-cargo">提交散货</button>
         </div>
     </div>
-    <div class="threejscontainer" id="3jscontainer">
-        <div id="canvas-frame"></div>
-        <button id="prev-area-btn" class="btn btn-primary btn-wide mrm">上一区域</button>
-        <button id="next-area-btn" class="btn btn-primary btn-wide mrm">下一区域</button>
+    <div id="right">
+
     </div>
 </div>
 </body>

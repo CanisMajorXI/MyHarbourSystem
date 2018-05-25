@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>红太阳管理系统</title>
+    <link type="text/css" rel="stylesheet"
+          href="http://cdn.staticfile.org/twitter-bootstrap/3.1.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="../static/css/flat-ui.min.css" rel="stylesheet">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="../static/js/jqPaginator.js"></script>
+    <script src="../static/layer-v3.1.1/layer/layer.js"></script>
+    <script src="/static/js/three.js"></script>
+    <script src="/static/js/OrbitControls.js"></script>
+    <script src="/static/js/Detector.js"></script>
+    <script src="/static/js/mythreejs.js"></script>
+    <!--<script type="text/javascript" src="../static/js/operator.js">-->
+    <!--</script>-->
+    <script>
+
+        $(function () {
+
+            /**
+             * 这个方法主要用来获得Json数据
+             * @param url 目标API地址
+             * @param data 传入的参数
+             * @param func 传入的函数
+             * @returns {{type: string, dataType: string, url: *, data: *, success: success, error: error}}
+             */
+            function getInformation(url, data, sussFunc, failFunc, index) {
+                return {
+                    type: "POST",
+                    dataType: "json",
+                    url: url,
+                    data: data,
+                    success: function (result) {
+                        layer.close(index);
+                        sussFunc(result);
+                    },
+                    error: function () {
+                        layer.close(index);
+                        failFunc();
+                    }
+                };
+            }
+
+            /**
+             * jQuery重写的表格颜色变换函数
+             */
+            function altRowsjq() {
+                let rows = $(".my-tr");
+
+                for (let i = 0; i < rows.length; i++) {
+                    if (i % 4 == 0) {
+                        $(rows[i]).addClass("evenrowcolor");
+                    } else if (i % 4 == 2) {
+                        $(rows[i]).addClass("oddrowcolor");
+                    }
+                }
+            }
+
+            /**---------------初始化页面数据------------------**/
+            let cargoDataJson;
+
+            let cargoPageNum = 1;
+            let cargoPageMaxNum = 1;
+            let currentCargoPageMaxNum = 5;
+            let currentCargoPageMinxNum = 1;
+
+            const containerTable = $("#container-table-tbody");
+            const cargoTable = $("#cargo-table-tbody");
+
+            /**---------------初始化页面数据------------------ **/
+
+            /**
+             * 获取特定页数的JSON数据到箱子表
+             * @param content 是处理后的Json数据
+             * @param pageNum 是对应的页数
+             * @param table 表格父节点
+             */
+            function getContainerDataByPage(content, table) {
+                let type = {
+                    0: "普通箱",
+                    1: "冷冻箱",
+                    2: "危险箱"
+                };
+                let size = {
+                    0: "小箱子",
+                    1: "大箱子"
+                };
+                let empty = {
+                    0:"空箱",
+                    1:"半箱",
+                    2:"满箱"
+                };
+
+                // 先清空表格内容
+                table.empty();
+
+                // 遍历添加内容
+                $.each(content, function (index, val) {
+                    let trHtml = "<tr class='my-tr'>" +
+                        "<th>" + val['containerId'] + "</th>" +
+                        "<th>" + getContainerArea(val['containerArea']) + "</th>" +
+                        "<th>" + val['row'] + "</th>" +
+                        "<th>" + val['column'] + "</th>" +
+                        "<th>" + val['layer'] + "</th>" +
+                        "<th>" + type[val['type']] + "</th>" +
+                        "<th>" + size[val['size']] + "</th>" +
+                        "<th>" + empty[val['emptyStatus']]+"</th>" +
+                        "</tr>";
+                    table.append(trHtml);
+                });
+                // 每次刷新完成以后，都要重新绑定事件监听器
+                boundContainerTableBtn();
+                altRowsjq();
+            }
+
+            /**
+             * 获取特定页数的JSON数据到货物表
+             * @param content
+             * @param pageNum
+             * @param table
+             */
+            function getCargoDataByPage(content, pageNum, table) {
+
+                // 先清空表格内容
+                table.empty();
+
+                // 遍历添加内容
+                $.each(temContent, function (index, val) {
+                    $.each(val, function (i, v) {
+                        let tt;
+                        (v['cargo']['containerId'] == 'null') ? tt = "未装箱" : tt = ("已装箱，箱子id：" + v['cargo']['containerId']);
+                        let trHtml = "<tr class='my-tr'>" +
+                            "<th>" + v['cargo']['cargoId'] + "</th>" +
+                            "<th>" + v['cargoAttr']['cargoName'] + "</th>" +
+                            "<th>" + v['cargo']['gross'] + "</th>" +
+                            "<th>" + tt + "</th>" +
+                            "</tr>";
+                        table.append(trHtml);
+                    });
+                });
+                // 每次刷新完成以后，都要重新绑定事件监听器
+                boundCargoTableBtn();
+                altRowsjq();
+            }
+
+            /**
+             * 绑定监听器--箱子表格，弹出窗口设置
+             */
+            function boundContainerTableBtn() {
+                $("#container-table-tbody .my-tr").click(function () {
+                    // 箱子里的货物
+                    let content = '';
+                    // 获取当前选中的箱子的ID
+                    let containerID = Number($(this).children().first().text());
+
+                    let lodaIndex = layer.load();
+                    // ajax请求获得数据，通过箱子ID获得内部货物
+                    $.ajax({
+                        type: "POST",
+                        dataType: "JSON",
+                        url: "/api/operator/get/cargos-by-containerid",
+                        data: {
+                            id: containerID
+                        },
+                        success: function (cargoData) {
+                            layer.close(lodaIndex);
+                            // 如果箱子中并没有货物
+                            if (cargoData.cargos.length <= 0) {
+                                content = "<div id='open-data'><h5 align='center'>这是一个空箱</h5>" +
+                                    "<button class='btn btn-info'>移动箱子</button><button class='btn btn-warning'>移除箱子</button></div>";
+
+                            } else {
+                                $.each(cargoData, function (index, val) {
+                                    $.each(val, function (i, v) {
+                                        content += "<div id='open-data'><p>货物&nbsp&nbspID：" + v['cargo']['cargoId'] +
+                                            "</p><p>货物类型：" + v['cargoAttr']['cargoName'] +
+                                            "</p><p>货物数量：" + v['cargo']['gross'] +
+                                            "</p><p>货主&nbsp&nbspID：" + v['cargo']['userId'] +
+                                            "</p></div>"
+                                    });
+                                    content += "<div id='open-data-button'><button class='btn btn-info' id='move-container-btn'>移动箱子</button><button class='btn btn-warning' id='remove-container-btn'>移除箱子</button></div>";
+                                });
+                            }
+                            layer.open({
+                                type: 1,
+                                title: "查询结果",
+                                closeBtn: 1,
+                                shadeClose: true,
+                                skin: 'layui-layer-molv',
+                                content: content
+                            });
+                            $("#move-container-btn").click(function () {
+                                let position;
+                                // ajax请求获得数据（可插入位置）
+
+                                let content = $("<div id='container-selectable-position'></div>");
+
+                                $.each(resultJson.container, function (index, val) {
+                                    let value = val['row'] + ',' + val['column'] + ',' + val['layer'];
+                                    let button = "<button class='btn btn-primary btn-sm container-selectable-position-btn'>" + value + "</button>";
+                                    content.append(button);
+                                });
+                                console.log(content.html());
+                                layer.open({
+                                    type: 1,
+                                    title: "可插入位置",
+                                    closeBtn: 1,
+                                    shadeClose: true,
+                                    skin: 'layui-layer-molv',
+                                    content: content.html(),
+                                    area: ['800px', 'auto']
+                                });
+                                // 位置按钮事件监听器
+                                $(".container-selectable-position-btn").click(function () {
+                                    position = $(this).text();
+                                    layer.confirm("确定要插入到该位置？", function (index) {
+                                        // ajax请求插入
+                                        alert(position);
+                                        layer.close(index);
+                                        layer.close(index - 1);
+                                        layer.close(index - 2);
+                                    }, function (index) {
+                                        layer.close(index);
+                                    });
+                                })
+                            });
+
+                            $("#remove-container-btn").click(function () {
+                                let content = "<p>是否确定移除该箱子？</p>";
+                                layer.confirm(content,
+                                    function (index) { // 确定后调用的函数
+
+                                        let loadIndex = layer.load();
+                                        // ajax删除请求，通过箱子ID
+                                        $.ajax({
+                                            type: "POST",
+                                            dataType: "JSON",
+                                            url: "/api/operator/export/container",
+                                            data: {
+                                                id: containerID
+                                            },
+                                            success: function () {
+                                                layer.close(loadIndex);
+                                                layer.alert('删除成功');
+                                            },
+                                            error: function () {
+                                                layer.close(loadIndex);
+                                                layer.alert('连接服务器失败');
+                                            }
+                                        });
+
+                                        layer.close(index);
+                                        layer.close(index - 1);
+                                        // 修改数据库后需要刷新 这里的json需要得到回传的json
+
+                                        let loadIndex1 = layer.load();
+                                        $.ajax({
+                                            type: "POST",
+                                            dataType: "json",
+                                            url: '/api/operator/get/containers',
+                                            data: {
+                                                size: $("#search-container-size").val(),
+                                                type: $("#search-container-type").val(),
+                                                area: $("#search-container-area").val(),
+                                                page: $("#table-top li.active").attr("jp-data")
+                                            },
+                                            success: function (resultJson) {
+                                                layer.close(loadIndex1);
+                                                getContainerDataByPage(resultJson.containers, containerTable);
+                                            },
+                                            error: function () {
+                                                layer.close(loadIndex1);
+                                                layer.alert("表格信息请求失败");
+                                            }
+                                        });
+
+                                    }, function () { // 取消调用的函数
+                                    });
+                            });
+                        },
+                        error: function () {
+                            layer.close(lodaIndex);
+                            layer.alert("查询箱子内容失败");
+                        }
+                    });
+                });
+
+                /**
+                 * 表格中按键的样式设计
+                 */
+                $("#container-table-tbody .my-tr").hover(function () {
+                    $(this).siblings().removeClass("mouseoverColor");
+                    $(this).addClass("mouseoverColor");
+                }, function () {
+                    $(this).removeClass("mouseoverColor");
+                });
+            }
+
+            /**
+             * 绑定监听器--货物表格，弹出窗口设置
+             */
+            function boundCargoTableBtn() {
+                $("#cargo-table-tbody .my-tr").click(function () {
+                    // 箱子里的货物
+                    let content;
+                    // 获取当前选中的箱子的ID
+                    let containerID = Number($(this).children().first().text());
+
+                    // ajax请求获得数据，通过箱子ID获得内部货物
+                    let cargoData = {
+                        "cargo":
+                            [{
+                                "cargoId": 10000000,
+                                "typeId": 10000000,
+                                "gross": 1088,
+                                "containerId": 10000000
+                            }]
+                    };
+
+
+                    $.each(cargoData.cargo, function (index, val) {
+                        content = "<div id='open-data-cargo'><p>货物&nbsp&nbspID：" + val['cargoId'] +
+                            "</p><p>货物类型：" + val['typeId'] +
+                            "</p><p>货物数量：" + val['gross'] +
+                            "</p><button class='btn btn-info' id='empty-move-cargo-btn'>插入空箱子</button><button class='btn btn-info' id='half-move-cargo-btn'>插入有货箱子</button>" +
+                            "</div>"
+                    });
+
+                    layer.open({
+                        type: 1,
+                        title: "货物属性",
+                        closeBtn: 1,
+                        shadeClose: true,
+                        skin: 'layui-layer-molv',
+                        content: content
+                    });
+
+                    // 插入到空箱中
+                    $("#empty-move-cargo-btn").click(function () {
+                        let position;
+                        // ajax请求获得数据（可插入位置）
+                        let resultJson = {
+                            "container": ["123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778"]
+                        };
+                        let content = $("<div id='cargo-selectable-position'></div>");
+                        let body = $("<div id='layer-body'></div>");
+                        $.each(resultJson.container, function (index, val) {
+                            let value = val;
+                            let button = "<button class='btn btn-primary btn-sm cargo-selectable-position-btn'>" + value + "</button>";
+                            body.append(button);
+                        });
+
+
+                        content.append(body);
+                        console.log(content.html());
+                        layer.open({
+                            type: 1,
+                            title: "可插入的箱子",
+                            closeBtn: 1,
+                            shadeClose: true,
+                            skin: 'layui-layer-molv',
+                            content: content.html(),
+                            area: ['800px', '600px']
+                        });
+
+                        // 位置按钮事件监听器
+                        function boundAfterRefresh() {
+                            $(".cargo-selectable-position-btn").click(function () {
+                                position = $(this).text();
+                                layer.confirm("确定要插入到该位置？", function (index) {
+                                    // ajax请求插入
+                                    alert(position);
+                                    layer.close(index);
+                                    layer.close(index - 1);
+                                    layer.close(index - 2);
+                                }, function (index) {
+                                    layer.close(index);
+                                });
+                            });
+                        }
+
+                        boundAfterRefresh();
+
+                    });
+                    // 插入到有货的箱子中
+                    $("#half-move-cargo-btn").click(function () {
+                        let position;
+                        // ajax请求获得数据（可插入位置）
+                        let resultJson = {
+                            "container": ["空箱区", "19988888", "1233333", "1232313", "12356778"]
+                        };
+                        let content = $("<div id='cargo-selectable-position'></div>");
+                        let body = $("<div id='layer-body'></div>");
+                        $.each(resultJson.container, function (index, val) {
+                            let value = val;
+                            let button = "<button class='btn btn-primary btn-sm cargo-selectable-position-btn'>" + value + "</button>";
+                            body.append(button);
+                        });
+                        content.append(body);
+                        console.log(content.html());
+                        layer.open({
+                            type: 1,
+                            title: "可插入的箱子",
+                            closeBtn: 1,
+                            shadeClose: true,
+                            skin: 'layui-layer-molv',
+                            content: content.html(),
+                            area: ['800px', '600px']
+                        });
+                        // 位置按钮事件监听器
+                        $(".cargo-selectable-position-btn").click(function () {
+                            position = $(this).text();
+                            layer.confirm("确定要插入到该位置？", function (index) {
+                                // ajax请求插入
+                                alert(position);
+                                layer.close(index);
+                                layer.close(index - 1);
+                                layer.close(index - 2);
+                            }, function (index) {
+                                layer.close(index);
+                            });
+                        });
+
+                    });
+                });
+
+                /**
+                 * 表格中按键的样式设计
+                 */
+                $("#cargo-table-tbody .my-tr").hover(function () {
+                    $(this).siblings().removeClass("mouseoverColor");
+                    $(this).addClass("mouseoverColor");
+                }, function () {
+                    $(this).removeClass("mouseoverColor");
+                });
+            }
+
+            /**
+             * 根据箱子的行号获得相应的区域
+             *
+             * @param row 箱子的行号
+             */
+            function getContainerArea(row) {
+                if (row == -1) {
+                    return "区域外";
+                } else if (row == 0) {
+                    return "空箱区";
+                } else if (row == 1) {
+                    return "普通区";
+                } else if (row == 2) {
+                    return "冷冻区";
+                } else if (row == 3) {
+                    return "危险区";
+                }
+            }
+
+            /**
+             * 箱子查询按钮，ajax实现
+             */
+            $("#search-container-btn").click(function () {
+                let index = layer.load();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: '/api/operator/get/count',
+                    data: {
+                        size: $("#search-container-size").val(),
+                        type: $("#search-container-type").val(),
+                        area: $("#search-container-area").val()
+                    },
+                    success: function (resultJson) {
+                        let totalPages = Math.ceil(resultJson / 9);
+                        refreshContainerTable(totalPages);
+                    },
+                    error: function () {
+                        layer.close(index);
+                        layer.alert("表格页数请求失败");
+                    }
+                });
+
+            });
+
+
+            /**
+             * 刷新箱子表的内容
+             * 同时刷新箱子表分页模块的内容
+             */
+            function refreshContainerTable(totalPages) {
+
+                // 分页模块的代码
+                $.jqPaginator('#container-pagination', {
+                    totalPages: totalPages,
+                    visiblePages: 5,
+                    currentPage: 1,
+                    prev: "<a class='btn btn-success previous'>上一页</a>",
+                    next: "<a class='btn btn-success next'>下一页</a>",
+                    page: '<li class="page"><a class="container-change-page" href="javascript:;">{{page}}</a></li>',
+                    onPageChange: function (num, type) {
+                        // 这里实现表格的刷新等功能
+                        let index = layer.load();
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            url: '/api/operator/get/containers',
+                            data: {
+                                size: $("#search-container-size").val(),
+                                type: $("#search-container-type").val(),
+                                area: $("#search-container-area").val(),
+                                page: num
+                            },
+                            success: function (resultJson) {
+                                layer.close(index);
+                                getContainerDataByPage(resultJson.containers, containerTable);
+                            },
+                            error: function () {
+                                layer.close(index);
+                                layer.alert("表格信息请求失败");
+                            }
+                        });
+                    }
+                });
+            }
+
+            /**
+             * 货物查询按钮，ajax实现
+             */
+            $("#search-cargo-btn").click(function () {
+                /**
+                 * ajax请求数据
+                 */
+
+                let index = layer.load();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: '/api/operator/get/bulk-cargos',
+                    data: {
+                        type: $("#search-cargo-type").val(),
+                    },
+                    success: function (resultJson) {
+                        let totalPages = Math.ceil(resultJson / 9);
+                        refreshCargoTable(totalPages);
+                    },
+                    error: function () {
+                        layer.close(index);
+                        layer.alert("表格页数请求失败");
+                    }
+                });
+            });
+
+            /**
+             * 刷新货物表的内容，包括换页键
+             */
+            function refreshCargoTable(cargoJson) {
+                let cargoDataJson = cargoJson.cargos;
+                let totalPages = Math.ceil(cargoDataJson.length / 9);
+
+                // 分页模块的代码
+                $.jqPaginator('#cargo-pagination', {
+                    totalPages: totalPages,
+                    visiblePages: 5,
+                    currentPage: 1,
+                    prev: "<a class='btn btn-success previous'>上一页</a>",
+                    next: "<a class='btn btn-success next'>下一页</a>",
+                    page: '<li class="page"><a class="cargo-change-page" href="javascript:;">{{page}}</a></li>',
+                    onPageChange: function (num, type) {
+                        // 这里实现表格的刷新等功能
+                        getCargoDataByPage(cargoDataJson, cargoTable);
+                    }
+                });
+            }
+
+            /** ----------- 3D模型函数 ---------- **/
+            /**
+             * 3D模型初始化函数
+             */
+            startThreejs(0);
+
+            /**
+             * 获得箱子数据
+             * @returns {{type: string, dataType: string, url: string, data: {id: (*|jQuery), row: (*|jQuery), column: (*|jQuery), layer: (*|jQuery), type: (*|jQuery), size: (*|jQuery)}, success: success, error: error}}
+             */
+            function getContainers() {
+                return {
+                    type: "POST",
+                    dataType: "json",
+                    url: "/api/container/get",
+                    data: {
+                        id: $("#container-id").val(),
+                        row: $("#container-row").val(),
+                        column: $("#container-column").val(),
+                        layer: $("#container-layer").val(),
+                        type: $("#container-type").val(),
+                        size: $("#container-size").val()
+                    },
+                    success: function (result) {
+                        updateThreejs(result.container);
+                    },
+                    error: function () {
+                        alert("error!");
+                    }
+                };
+            }
+
+            /**
+             * 3D模型换页函数
+             */
+            $.ajax(getContainers());
+            $("#next-area-btn").click(function () {
+                if (areatype < 3) {
+                    areatype++;
+                    $.get("/api/container/get", function (result) {
+                        updateThreejs(result.container);
+                    }, "json");
+                }
+            });
+
+            $("#prev-area-btn").click(function () {
+                if (areatype > 0) {
+                    areatype--;
+                    $.get("/api/container/get", function (result) {
+                        updateThreejs(result.container);
+                    }, "json");
+                }
+
+            });
+            $("#container-query-btn").click(function () {
+                $.ajax(getContainers());
+            });
+            /** ----------- 3D模型函数 ---------- **/
+
+
+        });
+
+        // 测试用的json数据
+        json1 = {
+            "container": [
+                {
+                    "id": "10000000",
+                    "row": 1,
+                    "column": 1,
+                    "layer": 1,
+                    "type": 1,
+                    "size": 1
+                },
+                {
+                    "id": 10000001,
+                    "row": 1,
+                    "column": 4,
+                    "layer": 1,
+                    "type": 2,
+                    "size": 0
+                },
+                {
+                    "id": 10000002,
+                    "row": 1,
+                    "column": 7,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 10000004,
+                    "row": 2,
+                    "column": 1,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 12121111,
+                    "row": 4,
+                    "column": 7,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 88888888,
+                    "row": 8,
+                    "column": 2,
+                    "layer": 2,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 312312222,
+                    "row": 4,
+                    "column": 4,
+                    "layer": 1,
+                    "type": 1,
+                    "size": 0
+                }
+            ]
+        };
+        json2 = {
+            "container": [
+                {
+                    "id": "10000000",
+                    "row": 1,
+                    "column": 1,
+                    "layer": 1,
+                    "type": 1,
+                    "size": 1
+                },
+                {
+                    "id": 10000001,
+                    "row": 1,
+                    "column": 4,
+                    "layer": 1,
+                    "type": 2,
+                    "size": 0
+                },
+                {
+                    "id": 10000002,
+                    "row": 1,
+                    "column": 7,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 10000004,
+                    "row": 2,
+                    "column": 1,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 12121111,
+                    "row": 4,
+                    "column": 7,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 88888888,
+                    "row": 8,
+                    "column": 2,
+                    "layer": 2,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 312312222,
+                    "row": 4,
+                    "column": 4,
+                    "layer": 1,
+                    "type": 1,
+                    "size": 0
+                },
+                {
+                    "id": 10000002,
+                    "row": 1,
+                    "column": 7,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 10000004,
+                    "row": 2,
+                    "column": 1,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 12121111,
+                    "row": 4,
+                    "column": 7,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 88888888,
+                    "row": 8,
+                    "column": 2,
+                    "layer": 2,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 312312222,
+                    "row": 4,
+                    "column": 4,
+                    "layer": 1,
+                    "type": 1,
+                    "size": 0
+                },
+                {
+                    "id": 10000002,
+                    "row": 1,
+                    "column": 7,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 10000004,
+                    "row": 2,
+                    "column": 1,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 12121111,
+                    "row": 4,
+                    "column": 7,
+                    "layer": 1,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 88888888,
+                    "row": 8,
+                    "column": 2,
+                    "layer": 2,
+                    "type": 0,
+                    "size": 0
+                },
+                {
+                    "id": 312312222,
+                    "row": 4,
+                    "column": 4,
+                    "layer": 1,
+                    "type": 1,
+                    "size": 0
+                }
+            ]
+        };
+        json3 = {"container": []};
+        json4 = {
+            "cargo": [
+                {
+                    "cargoId": "123123",
+                    "cargoType": "棉花",
+                    "cargoGross": "1200",
+                    "containerId": "10000000"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "棉花",
+                    "cargoGross": "8888",
+                    "containerId": "0"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "维尼熊玩偶",
+                    "cargoGross": "1200",
+                    "containerId": "10034500"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "青蛙模型",
+                    "cargoGross": "1200",
+                    "containerId": "0"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "华莱士公仔",
+                    "cargoGross": "80",
+                    "containerId": "1888800"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "林则徐",
+                    "cargoGross": "9600",
+                    "containerId": "10222000"
+                }, {
+                    "cargoId": "123123",
+                    "cargoType": "腊肉",
+                    "cargoGross": "6666",
+                    "containerId": "0"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "维尼熊玩偶",
+                    "cargoGross": "12000",
+                    "containerId": "10034500"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "青蛙模型",
+                    "cargoGross": "1200",
+                    "containerId": "0"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "朝鲜炒饭",
+                    "cargoGross": "80",
+                    "containerId": "188800"
+                },
+                {
+                    "cargoId": "123123",
+                    "cargoType": "腊肉",
+                    "cargoGross": "9600",
+                    "containerId": "102000"
+                },
+            ]
+        };
+
+
+    </script>
+    <link href="../static/css/operator-page-ui.css" rel="stylesheet">
+    <style>
+
+        #layer-body button {
+            margin: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+<div id="warpper">
+    <!--箱子表模块-->
+    <div class="my-table-warpper" id="table-top">
+        <div class="mengban"></div>
+        <!--工具行-->
+        <div class="tools">
+            <div class="tools-block">
+                <button id="search-container-btn" class="btn btn-primary">
+                    查询
+                </button>
+            </div>
+            <div class="tools-block">
+                <select name="container-area" id="search-container-area">
+                    <option value>所有区域</option>
+                    <option value="-1">区域外</option>
+                    <option value="0">空箱区</option>
+                    <option value="1">普通区</option>
+                    <option value="2">冷冻区</option>
+                    <option value="3">危险区</option>
+                </select>
+            </div>
+            <div class="tools-block">
+                <select name="container-type" id="search-container-type">
+                    <option value>所有类型</option>
+                    <option value="0">普通箱</option>
+                    <option value="1">冷冻箱</option>
+                    <option value="2">危险箱</option>
+                </select>
+            </div>
+            <div class="tools-block">
+                <select name="container-size" id="search-container-size">
+                    <option value>所有大小</option>
+                    <option value="0">小箱子</option>
+                    <option value="1">大箱子</option>
+                </select>
+            </div>
+        </div>
+        <!--表内容-->
+        <div class="my-table">
+            <table class="altrowstable" id="container-table">
+                <thead>
+                <tr class="my-tr-head">
+                    <th>ID</th>
+                    <th>区域</th>
+                    <th>行</th>
+                    <th>列</th>
+                    <th>层</th>
+                    <th>类型</th>
+                    <th>大小</th>
+                    <th>状态</th>
+                </tr>
+                </thead>
+                <tbody id="container-table-tbody"></tbody>
+            </table>
+        </div>
+        <div class="pagination-warpper">
+            <div class="pagination pagination-success">
+                <ul id="container-pagination">
+                    <!--等待添加数据-->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--箱子表模块结束-->
+
+    <!--货物表模块-->
+    <div class="my-table-warpper" id="table-bottom">
+        <div class="mengban"></div>
+
+        <!--工具行-->
+        <div class="tools">
+            <div class="tools-block">
+                <button id="search-cargo-btn" class="btn btn-primary">
+                    查询
+                </button>
+            </div>
+            <div class="tools-block">
+                <select name="container-type" id="search-cargo-type">
+                    <option value>可装箱类型</option>
+                    <option value="0">普通箱</option>
+                    <option value="1">冷冻箱</option>
+                    <option value="2">危险箱</option>
+                </select>
+            </div>
+        </div>
+        <!--表内容-->
+        <div class="my-table">
+            <table class="altrowstable" id="cargo-table">
+                <thead>
+                <tr class="my-tr-head">
+                    <th>货物ID</th>
+                    <th>货物类型</th>
+                    <th>货物数量</th>
+                    <th>货物状态</th>
+                </tr>
+                </thead>
+                <tbody id="cargo-table-tbody"></tbody>
+            </table>
+
+        </div>
+        <!--分页按钮-->
+        <div class="pagination-warpper">
+            <div class="pagination pagination-success">
+                <ul id="cargo-pagination">
+                    <!--等待添加数据-->
+                </ul>
+            </div>
+        </div>
+        <!--货物表模块结束-->
+    </div>
+    <!--画板模块-->
+    <div class="my-canvas-warpper">
+        <div class="threejscontainer" id="3jscontainer">
+            <div id="canvas-frame"></div>
+            <div id="canvas-button">
+                <button id="prev-area-btn" class="btn btn-primary btn-wide mrm">上一区域</button>
+                <button id="next-area-btn" class="btn btn-primary btn-wide mrm">下一区域</button>
+            </div>
+        </div>
+    </div>
+    <!--画板模块结束-->
+
+
+</div>
+
+</body>
+</html>
