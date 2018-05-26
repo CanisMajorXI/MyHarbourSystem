@@ -2,6 +2,7 @@ package com.myharbour.service;
 
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
+import com.myharbour.pojo.Position;
 import com.myharbour.pojo.ResultantCargoInfo;
 
 import java.util.List;
@@ -54,7 +55,8 @@ public interface QueryService {
                                                                   Integer userId,
                                                                   int page);
 
-    void test();
+
+    List<Position> getInsertablePosition(Integer containerId,Integer op);
 //
 //    /**
 //     * @return 获取所有的在仓库内的箱子

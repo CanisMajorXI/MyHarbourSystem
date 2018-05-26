@@ -13,6 +13,7 @@ public class Position {
         this.layer = layer;
         this.area = area;
     }
+public Position() {};
 
     public Integer getRow() {
         return row;
@@ -44,5 +45,15 @@ public class Position {
 
     public void setArea(Integer area) {
         this.area = area;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Position)) return false;
+        Position p = (Position) obj;
+        return this.area.equals(p.getArea())
+                && this.row.equals(p.getRow())
+                && this.column.equals(p.getColumn())
+                && this.layer.equals(p.getLayer());
     }
 }

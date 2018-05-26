@@ -2,8 +2,11 @@ package com.myharbour.controller;
 
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
+import com.myharbour.pojo.Position;
 import com.myharbour.pojo.ResultantCargoInfo;
 import com.myharbour.service.ExportService;
+import com.myharbour.service.ImportService;
+import com.myharbour.service.InsertablePositionService;
 import com.myharbour.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -30,6 +33,9 @@ public class OperatorController {
 
     @Autowired
     private ExportService exportService = null;
+
+    @Autowired
+    private ImportService importService = null;
 
     @RequestMapping("/get/containers-count")
     @ResponseBody
@@ -96,7 +102,7 @@ public class OperatorController {
         ModelAndView modelAndView = new ModelAndView();
         if (id == null) return modelAndView;
         try {
-            List<ResultantCargoInfo> list = queryService.getResultantCargoInfoBySpecificParas(id, null,null, 0);
+            List<ResultantCargoInfo> list = queryService.getResultantCargoInfoBySpecificParas(id, null, null, 0);
             // List<Cargo> list = queryService.getCargosByContainerId(id);
             modelMap.addAttribute("cargos", list);
             modelAndView.setView(new MappingJackson2JsonView());
@@ -117,7 +123,7 @@ public class OperatorController {
         if (containerType != null && !(containerType == 0 || containerType == 1 || containerType == 2))
             return modelAndView;
         try {
-            List<ResultantCargoInfo> resultantCargoInfos = queryService.getResultantCargoInfoBySpecificParas(null, containerType,null, page);
+            List<ResultantCargoInfo> resultantCargoInfos = queryService.getResultantCargoInfoBySpecificParas(null, containerType, null, page);
             modelMap.addAttribute("cargos", resultantCargoInfos);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
@@ -140,14 +146,21 @@ public class OperatorController {
         }
     }
 
-    @RequestMapping("/import/empty-container")
-    public boolean importEmptyContainer(@RequestParam("id") Integer id,
-                                        @RequestParam("row") Integer row,
-                                        @RequestParam("column") Integer cloumn,
-                                        @RequestParam("layer") Integer layer) {
+    @RequestMapping("/import/container")
+    @ResponseBody
+    public boolean importContainer(@RequestParam("id") Integer id,
+                                   @RequestParam("row") Integer row,
+                                   @RequestParam("column") Integer cloumn,
+                                   @RequestParam("layer") Integer layer,
+                                   @RequestParam("area") Integer area) {
         try {
-            if (id == null || row == null || cloumn == null || layer == null) return false;
-            //todo
+            if (id == null || row == null || cloumn == null || layer == null || area == null) return false;
+            Position position = new Position();
+            position.setRow(row);
+            position.setColumn(cloumn);
+            position.setLayer(layer);
+            position.setArea(area);
+            importService.importAContainer(id, position);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -220,11 +233,46 @@ public class OperatorController {
         }
     }
 
-    @RequestMapping("/get/insertable-area")
-    public ModelAndView getInsertableArea() {
+    @RequestMapping("/get/import-insertable-area")
+    public ModelAndView getImportInsertableArea(@RequestParam("id") Integer id, ModelMap modelMap) {
         ModelAndView modelAndView = new ModelAndView();
-        //todo
+        if (id == null) return modelAndView;
         try {
+            List<Position> positionList =
+                    queryService.getInsertablePosition(id, InsertablePositionService.OP_IMPORT);
+            modelMap.addAttribute("postition", positionList);
+            modelAndView.setView(new MappingJackson2JsonView());
+            return modelAndView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return modelAndView;
+        }
+    }
+
+    @RequestMapping("/get/load-insertable-area")
+    public ModelAndView getLoadInsertableArea(@RequestParam("id") Integer id, ModelMap modelMap) {
+        ModelAndView modelAndView = new ModelAndView();
+        if (id == null) return modelAndView;
+        try {
+            List<Position> positionList =
+                    queryService.getInsertablePosition(id, InsertablePositionService.OP_LOAD);
+            modelMap.addAttribute("postition", positionList);
+            modelAndView.setView(new MappingJackson2JsonView());
+            return modelAndView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return modelAndView;
+        }
+    }
+
+    @RequestMapping("/get/move-insertable-area")
+    public ModelAndView getMoveInsertableArea(@RequestParam("id") Integer id, ModelMap modelMap) {
+        ModelAndView modelAndView = new ModelAndView();
+        if (id == null) return modelAndView;
+        try {
+            List<Position> positionList =
+                    queryService.getInsertablePosition(id, InsertablePositionService.OP_MOVE);
+            modelMap.addAttribute("postition", positionList);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
         } catch (Exception e) {

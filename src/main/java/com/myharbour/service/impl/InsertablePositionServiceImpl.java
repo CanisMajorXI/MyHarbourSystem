@@ -20,22 +20,12 @@ public class InsertablePositionServiceImpl implements InsertablePositionService 
     private ContainerMapper containerMapper = null;
 
     /**
-     * @param containerId
-     * @return 根据ID查询箱子的信息，确定符合该箱子的可插入位置，返回Position的列表
+     * * @return 根据ID查询箱子的信息，确定符合该箱子的可插入位置，返回Position的列表
      */
+
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
-    public List<Position> getInsertablePosition(Integer containerId) {
-        List<Container> tempContainerList = containerMapper.getContainersWithEmptyStatus(containerId, null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                new RowBounds());
-        if (tempContainerList.size() != 1) throw new RuntimeException();
-        Container myContainer = tempContainerList.get(0);
+    public List<Position> getInsertablePosition(Container myContainer) {
         int destArea = 0;
         switch (myContainer.getContainerArea()) {
             case Container.AREA_TASK:
@@ -57,13 +47,24 @@ public class InsertablePositionServiceImpl implements InsertablePositionService 
                 null,
                 null
                 , new RowBounds());
-        int a =4;
-        List<Position> list = InsertablePositionTool.getInsertablePosition(Area.getInstanceByArea(destArea),destContainerList,0);
-      int aw =4;
-//        List<containerMapper.getContainersWithEmptyStatus (null, destArea, null,
-//                null, null, null, null, null, new RowBounds());
-        return null;
+        int a = 4;
+        List<Position> list = InsertablePositionTool.getInsertablePosition(Area.getInstanceByArea(destArea),
+                destContainerList, 0);
+     return list;
     }
 
-
+    @Override
+    public List<Position> getInsertablePositionById(Integer containerId) {
+        List<Container> tempContainerList = containerMapper.getContainersWithEmptyStatus(containerId, null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new RowBounds());
+        if (tempContainerList.size() != 1) throw new RuntimeException();
+        Container myContainer = tempContainerList.get(0);
+        return getInsertablePosition(myContainer);
+    }
 }

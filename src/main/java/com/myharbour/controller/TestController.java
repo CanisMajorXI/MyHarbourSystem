@@ -109,10 +109,10 @@ public class TestController {
         return true;
     }
 
-    @RequestMapping("/test")
-    @ResponseBody
-    public boolean test(@RequestParam("id")Integer id) {
-        insertablePositionService.getInsertablePosition(id);
-        return true;
-    }
+//    @RequestMapping("/test")
+//    @ResponseBody
+//    public boolean test(@RequestParam("id")Integer id) {
+//        insertablePositionService.getInsertablePosition(id);
+//        return true;
+//    }
 }

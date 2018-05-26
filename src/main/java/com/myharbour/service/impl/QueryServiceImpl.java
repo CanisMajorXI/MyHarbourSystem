@@ -4,7 +4,9 @@ import com.myharbour.dao.CargoMapper;
 import com.myharbour.dao.ContainerMapper;
 import com.myharbour.pojo.Cargo;
 import com.myharbour.pojo.Container;
+import com.myharbour.pojo.Position;
 import com.myharbour.pojo.ResultantCargoInfo;
+import com.myharbour.service.InsertablePositionService;
 import com.myharbour.service.QueryService;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class QueryServiceImpl implements QueryService {
 
     @Autowired
     private CargoMapper cargoMapper = null;
+
+    @Autowired
+    private InsertablePositionService insertablePositionService = null;
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
@@ -52,7 +57,7 @@ public class QueryServiceImpl implements QueryService {
 
         int limit = 9;//前端一页显示的数量
         RowBounds rowBounds = page == 0 ? new RowBounds() : new RowBounds((page - 1) * limit, limit);
-        return cargoMapper.getResultantCargoInfoBySpecificParas(containerId, containerType,userId, rowBounds);
+        return cargoMapper.getResultantCargoInfoBySpecificParas(containerId, containerType, userId, rowBounds);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
@@ -68,8 +73,28 @@ public class QueryServiceImpl implements QueryService {
                 null, type, size, rowBounds);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
-    public void test() {
-
+    public List<Position> getInsertablePosition(Integer containerId, Integer op) {
+        switch (op) {
+            case InsertablePositionService.OP_IMPORT:
+                return insertablePositionService.getInsertablePositionById(containerId);
+            case InsertablePositionService.OP_LOAD:
+                List<Container> tempContainerList = containerMapper.getContainersWithEmptyStatus(containerId, null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        new RowBounds());
+                if (tempContainerList.size() != 1) throw new RuntimeException();
+                Container myContainer = tempContainerList.get(0);
+                myContainer.setEmptyStatus(2);
+                return insertablePositionService.getInsertablePosition(myContainer);
+            case InsertablePositionService.OP_MOVE:
+                return insertablePositionService.getInsertablePositionById(containerId);
+        }
+        return null;
     }
 }
