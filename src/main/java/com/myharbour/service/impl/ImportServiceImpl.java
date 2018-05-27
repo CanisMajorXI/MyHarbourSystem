@@ -8,6 +8,7 @@ import com.myharbour.pojo.Position;
 import com.myharbour.pojo.ResultantCargoInfo;
 import com.myharbour.service.ImportService;
 import com.myharbour.service.InsertablePositionService;
+import javafx.geometry.Pos;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,7 @@ public class ImportServiceImpl implements ImportService {
                 null, null, null, null, null, null, null, new RowBounds()).get(0);
         if (myContainer.getEmptyStatus() == null || myContainer.getContainerArea() != Container.AREA_EMPTY)
             throw new RuntimeException();
-        ResultantCargoInfo resultantCargoInfo = cargoMapper.getResultantCargoInfoBySpecificParas(cargoId,null,
+        ResultantCargoInfo resultantCargoInfo = cargoMapper.getResultantCargoInfoBySpecificParas(cargoId, null,
                 null, null, new RowBounds()).get(0);
         if (!myContainer.getType().equals(resultantCargoInfo.getCargoAttr().getContainerType()))
             throw new RuntimeException();
@@ -80,6 +81,19 @@ public class ImportServiceImpl implements ImportService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     @Override
     public void movePosition(Integer containerId, Position position) {
-
+        Container container = containerMapper.getContainerById(containerId);
+        if (!(container.getContainerArea() == Container.AREA_EMPTY ||
+                container.getContainerArea() == Container.AREA_FREEZE ||
+                container.getContainerArea() == Container.AREA_ORDINARY ||
+                container.getContainerArea() == Container.AREA_HAZARD)) throw new RuntimeException();
+        if (container.getContainerArea() == Container.AREA_EMPTY) container.setEmptyStatus(0);
+        else container.setEmptyStatus(1);
+        position.setArea(container.getContainerArea());
+        List<Position> list = insertablePositionService.getInsertablePosition(container);
+        if (!list.contains(position)) throw new RuntimeException();
+        container.setRow(position.getRow());
+        container.setColumn(position.getColumn());
+        container.setLayer(position.getLayer());
+        containerMapper.updateContainer(container);
     }
 }

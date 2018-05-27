@@ -192,6 +192,25 @@ public class OperatorController {
             return false;
         }
     }
+    @RequestMapping("/move/container")
+    @ResponseBody
+    public boolean moveContainer(@RequestParam("id") Integer id,
+                                   @RequestParam("row") Integer row,
+                                   @RequestParam("column") Integer cloumn,
+                                   @RequestParam("layer") Integer layer) {
+        try {
+            if (id == null || row == null || cloumn == null || layer == null) return false;
+            Position position = new Position();
+            position.setRow(row);
+            position.setColumn(cloumn);
+            position.setLayer(layer);
+            importService.movePosition(id,position);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 //    @RequestMapping("/import/container-with-cargo")
 //    public boolean importContainerWithCargo(@RequestParam("id") Integer id,
