@@ -50,7 +50,7 @@ public class InsertablePositionServiceImpl implements InsertablePositionService 
         int a = 4;
         List<Position> list = InsertablePositionTool.getInsertablePosition(Area.getInstanceByArea(destArea),
                 destContainerList, 0);
-     return list;
+        return list;
     }
 
     @Override

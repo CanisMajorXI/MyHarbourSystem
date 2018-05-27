@@ -57,7 +57,7 @@ public class QueryServiceImpl implements QueryService {
 
         int limit = 9;//前端一页显示的数量
         RowBounds rowBounds = page == 0 ? new RowBounds() : new RowBounds((page - 1) * limit, limit);
-        return cargoMapper.getResultantCargoInfoBySpecificParas(containerId, containerType, userId, rowBounds);
+        return cargoMapper.getResultantCargoInfoBySpecificParas(null,containerId, containerType, userId, rowBounds);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)

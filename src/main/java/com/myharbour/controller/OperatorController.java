@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -146,6 +147,30 @@ public class OperatorController {
         }
     }
 
+    @RequestMapping("/import/load-a-cargo-into-an-empty-container")
+    @ResponseBody
+    public boolean loadACargoIntoAnEmptyContainer(@RequestParam("cargoId") Integer cargoId,
+                                                  @RequestParam("containerId") Integer containerId,
+                                                  @RequestParam("row") Integer row,
+                                                  @RequestParam("column") Integer cloumn,
+                                                  @RequestParam("layer") Integer layer,
+                                                  @RequestParam("area") Integer area) {
+        if (cargoId == null || containerId == null || row == null || cloumn == null || layer == null || area == null)
+            return false;
+        Position position = new Position();
+        position.setArea(area);
+        position.setRow(row);
+        position.setLayer(layer);
+        position.setColumn(cloumn);
+        try {
+            importService.loadACargoIntoAnEmptyContainer(cargoId, containerId, position);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @RequestMapping("/import/container")
     @ResponseBody
     public boolean importContainer(@RequestParam("id") Integer id,
@@ -168,70 +193,70 @@ public class OperatorController {
         }
     }
 
-    @RequestMapping("/import/container-with-cargo")
-    public boolean importContainerWithCargo(@RequestParam("id") Integer id,
-                                            @RequestParam("row") Integer row,
-                                            @RequestParam("column") Integer cloumn,
-                                            @RequestParam("layer") Integer layer) {
-        try {
-            if (id == null || row == null || cloumn == null || layer == null) return false;
-            //todo
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    @RequestMapping("/import/container-with-cargo")
+//    public boolean importContainerWithCargo(@RequestParam("id") Integer id,
+//                                            @RequestParam("row") Integer row,
+//                                            @RequestParam("column") Integer cloumn,
+//                                            @RequestParam("layer") Integer layer) {
+//        try {
+//            if (id == null || row == null || cloumn == null || layer == null) return false;
+//            //todo
+//            return true;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
-    @RequestMapping("/import/cargo-into-repo-empty-container")
-    public boolean importCargoIntoRepo() {
-        try {
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    @RequestMapping("/import/cargo-into-repo-empty-container")
+//    public boolean importCargoIntoRepo() {
+//        try {
+//            return true;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
-    @RequestMapping("/import/cargo-into-repo-half-large-container")
-    public boolean importCargoIntoRepoHalfLargeContainer(@RequestParam("cargoid") Integer cargoId,
-                                                         @RequestParam("row") Integer row,
-                                                         @RequestParam("column") Integer column,
-                                                         @RequestParam("layer") Integer layer) {
-        if (cargoId == null || row == null || column == null || layer == null) return false;
-        try {
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    @RequestMapping("/import/cargo-into-repo-half-large-container")
+//    public boolean importCargoIntoRepoHalfLargeContainer(@RequestParam("cargoid") Integer cargoId,
+//                                                         @RequestParam("row") Integer row,
+//                                                         @RequestParam("column") Integer column,
+//                                                         @RequestParam("layer") Integer layer) {
+//        if (cargoId == null || row == null || column == null || layer == null) return false;
+//        try {
+//            return true;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
-    @RequestMapping("/get/insertable-empty-containers")
-    public ModelAndView getInsertableEmptyContainers() {
-        ModelAndView modelAndView = new ModelAndView();
-        //todo
-        try {
-            modelAndView.setView(new MappingJackson2JsonView());
-            return modelAndView;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return modelAndView;
-        }
-    }
-
-    @RequestMapping("/get/insertable-half-large-containers")
-    public ModelAndView getInsertableHalfLargeContainers() {
-        ModelAndView modelAndView = new ModelAndView();
-        //todo
-        try {
-            modelAndView.setView(new MappingJackson2JsonView());
-            return modelAndView;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return modelAndView;
-        }
-    }
+//    @RequestMapping("/get/insertable-empty-containers")
+//    public ModelAndView getInsertableEmptyContainers() {
+//        ModelAndView modelAndView = new ModelAndView();
+//        //todo
+//        try {
+//            modelAndView.setView(new MappingJackson2JsonView());
+//            return modelAndView;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return modelAndView;
+//        }
+//    }
+//
+//    @RequestMapping("/get/insertable-half-large-containers")
+//    public ModelAndView getInsertableHalfLargeContainers() {
+//        ModelAndView modelAndView = new ModelAndView();
+//        //todo
+//        try {
+//            modelAndView.setView(new MappingJackson2JsonView());
+//            return modelAndView;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return modelAndView;
+//        }
+//    }
 
     @RequestMapping("/get/import-insertable-area")
     public ModelAndView getImportInsertableArea(@RequestParam("id") Integer id, ModelMap modelMap) {

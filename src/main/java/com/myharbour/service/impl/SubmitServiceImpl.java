@@ -71,7 +71,7 @@ public class SubmitServiceImpl implements SubmitService {
             Cargo cargo = new Cargo();
             cargo.setUserId(userId);
             cargo.setCargoTypeId(cargoTypes[i]);
-            cargo.setGross(grosses[0]);
+            cargo.setGross(grosses[i]);
             cargo.setContainerId(container.getContainerId());
             cargoMapper.insertCargo(cargo);
         }

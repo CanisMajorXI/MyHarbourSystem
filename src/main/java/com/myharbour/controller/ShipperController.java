@@ -122,7 +122,7 @@ public class ShipperController {
         if (type == null || size == null || amount == null || cargoType1 == null || gross1 == null) return false;
         if (!(type == Container.TYPE_ORDINARY ||
                 type == Container.TYPE_FREEZE ||
-                type == Container.AREA_HAZARD)) return false;
+                type == Container.TYPE_HAZARD)) return false;
         if (!(amount == 1 || amount == 2)) return false;
         if (!(size == Container.SIZE_SMALL || size == Container.SIZE_LARGE)) return false;
         if (size == Container.SIZE_SMALL && amount == 2) return false;
