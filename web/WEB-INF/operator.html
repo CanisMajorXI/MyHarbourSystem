@@ -183,6 +183,9 @@
                                             "</p><p>货主&nbsp&nbspID：" + v['cargo']['userId'] +
                                             "</p></div>"
                                     });
+                                    if (){
+
+                                    }
                                     content += "<div id='open-data-button'><button class='btn btn-info' id='move-container-btn'>移动箱子</button><button class='btn btn-warning' id='remove-container-btn'>移除箱子</button></div>";
                                 });
                             }
@@ -217,7 +220,7 @@
                                         let content = $("<div id='container-selectable-position'></div>");
                                         $.each(resultJson.postition, function (index, val) {
                                             let value = areaName[val['area']] + val['row'] + ',' + val['column'] + ',' + val['layer'];
-                                            let button = "<button class='btn btn-primary btn-sm container-selectable-position-btn' jq-row='" + val['row'] + "' jq-column='" + val['column'] + "' jq-layer='" + val['layer'] + "'>" + value + "</button>";
+                                            let button = "<button class='btn btn-primary btn-sm container-selectable-position-btn' jq-row='" + val['row'] + "' jq-column='" + val['column'] + "' jq-layer='" + val['layer'] + "' jq-area='"+ val['area']+"'>" + value + "</button>";
                                             content.append(button);
                                         });
                                         layer.open({
@@ -236,30 +239,51 @@
                                             let row = $(this).attr('jq-row');
                                             let column = $(this).attr('jq-column');
                                             let mylayer = $(this).attr('jq-layer');
+                                            let area = $(this).attr('jq-area');
+
                                             layer.confirm("确定要插入到该位置？", function (index) {
                                                 // ajax请求插入
                                                 $.ajax({
                                                     type: "POST",
                                                     dataType: "JSON",
-                                                    url: "/api/operator/move/container",
+                                                    url: "/api/operator/import/container",
                                                     data: {
                                                         id: containerID,
                                                         row: row,
                                                         column: column,
-                                                        layer: mylayer
+                                                        layer: mylayer,
+                                                        area:area
                                                     },
                                                     success: function (resultJson) {
                                                         layer.close(myIndex);
-                                                        layer.alert("移动位置成功");
                                                         layer.close(index);
                                                         $.ajax(getContainers());
+                                                        $.ajax({
+                                                            type: "POST",
+                                                            dataType: "json",
+                                                            url: '/api/operator/get/containers',
+                                                            data: {
+                                                                size: $("#search-container-size").val(),
+                                                                type: $("#search-container-type").val(),
+                                                                area: $("#search-container-area").val(),
+                                                                page: $("#table-top li.active").attr("jp-data")
+                                                            },
+                                                            success: function (resultJson) {
+                                                                layer.alert("移动成功");
+                                                                $.ajax(getContainers());
+                                                                getContainerDataByPage(resultJson.containers, containerTable);
+                                                            },
+                                                            error: function () {
+                                                                layer.close(loadIndex1);
+                                                                layer.alert("表格信息请求失败");
+                                                            }
+                                                        });
                                                     },
                                                     error: function () {
                                                         layer.close(myIndex);
                                                         layer.alert("移动位置失败");
                                                     }
                                                 });
-                                                alert(position);
                                                 layer.close(myIndex);
                                                 layer.close(index);
                                                 layer.close(index - 1);
