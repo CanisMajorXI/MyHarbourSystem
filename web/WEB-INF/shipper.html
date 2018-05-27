@@ -13,6 +13,21 @@
     <script src="/static/js/mythreejs.js"></script>
     <script>
         $(function () {
+
+            function  getAjaxData(url,data,fun1,fun2) {
+                return{
+                    type: "POST",
+                    dataType: "json",
+                    url: url,
+                    data:data,
+                    success:function (re) {
+                        fun1(re);
+                    },
+                    error:function () {
+                        fun2();
+                    }
+                }
+            }
             /**
              * 提交空箱子 OK*
              */
