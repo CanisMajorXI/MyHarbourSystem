@@ -72,7 +72,7 @@ $(document).ready(function () {
                 },
                 success: function (result) {
                     if (result && result === 'true')
-                        $(location).attr('href', '/home.html');
+                        $(location).attr('href', '/shipper.html');
                     else {
                         $(".submitbtn").after("<label class='error'>用户名或密码错误!</label>");
                         setTimeout(function () {

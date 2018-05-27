@@ -1,168 +1,460 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>红太阳管理系统</title>
     <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="../static/css/flat-ui.min.css" rel="stylesheet">
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../static/layer-v3.1.1/layer/layer.js"></script>
     <script src="/static/js/three.js"></script>
     <script src="/static/js/OrbitControls.js"></script>
     <script src="/static/js/Detector.js"></script>
     <script src="/static/js/mythreejs.js"></script>
+    <script>
+        $(function () {
+            /**
+             * 提交空箱子 OK*
+             */
+            $("#submit-empty-container").click(function () {
+                let content;
+                content = "<div id=\"empty-container-selector\">\n" +
+                    "    <label class='control-label'>选择类型：</label><select class='select' id=\"type\">\n" +
+                    "        <option value=\"0\">普通箱</option>\n" +
+                    "        <option value=\"1\">冷冻箱</option>\n" +
+                    "        <option value=\"2\">危险箱</option>\n" +
+                    "    </select>\n" +
+                    "    <label class='control-label'>选择型号：</label><select  class='select' id=\"size\">\n" +
+                    "        <option value=\"0\">小箱子</option>\n" +
+                    "        <option value=\"1\">大箱子</option>\n" +
+                    "    </select>\n" +
+                    "    <button class='btn btn-primary' id='submit-empty-container-btn'>提交箱子</button>\n" +
+                    "</div>";
+                layer.open({
+                    type: 1,
+                    title: "请选择箱子类型",
+                    closeBtn: 1,
+                    shadeClose: true,
+                    skin: 'layui-layer-molv',
+                    content: content
+                });
+                $("#submit-empty-container-btn").click(function () {
+                    let index = layer.load();
+                    let data = {
+                        type: $("#type").val(),
+                        size: $("#size").val()
+                    };
+                    let func = function (result) {
+                        if (result == true) {
+                            layer.close(index);
+                            layer.alert("空箱提交成功");
+                        } else {
+                            layer.close(index);
+                            layer.alert("空箱提交失败");
+                        }
+                        layer.close(index - 1);
+                    };
+                    let func2 = function () {
+                        layer.close(index);
+                        layer.alert("空箱提交失败");
+                        layer.close(index - 1);
+                    };
+                    let url = "/api/shipper/add/empty-container";
+                    $.ajax(getAjaxData(url, data, func, func2));
+                });
+            });
+
+            /**
+             * 提交满货箱
+             */
+            $("#submit-full-container").click(function () {
+                let index = layer.load();
+                $.get("/api/shipper/get/cargoattrs", function (cargoAttrs) {
+                    let nameAndTypeId = {};
+                    $.each(cargoAttrs.cargoAttrs, function (i, v) {
+                        nameAndTypeId[v['nameAndUnit']] = v['containerTypeId'];
+                    });
+                    let nameAndCargoId = {};
+                    $.each(cargoAttrs.cargoAttrs, function (i, v) {
+                        nameAndCargoId[v['nameAndUnit']] = v['cargoTypeId'];
+                    });
+                    layer.close(index);
+                    let html = '';
+                    html += "<div>" +
+                        "<div class='full-container-selector-item'><label>选择箱子大小：</label><select id='cargo-container-size'><option value='0'>小箱子</option><option value='1'>大箱子</option></select></div>" +
+                        "<div class='full-container-selector-item'><label>选择箱子类型：</label><select id='cargo-container-type'><option value='0'>普通箱</option><option value='1'>冷冻箱</option><option value='2'>危险箱</option></select></div>" +
+                        "<div class='full-container-selector-item' id='cargo-type-first'><label>选择货物类型：</label><select id='cargo-type-first-selector'></select><br><label>货物数量：</label><input type='number' id='cargo-gross-first'/></div>" +
+                        "<div class='full-container-selector-item' id='cargo-type-second'><label>选择货物类型：</label><select id='cargo-type-second-selector'></select><br><label>货物数量：</label><input type='number' id='cargo-gross-second'/></div>" +
+                        "<div class='full-container-selector-item'><button class='btn btn-primary' id='submit-full-container-btn'>提交箱子</button></div>" +
+                        "</div>";
+                    layer.open({
+                        type: 1,
+                        title: "请选择箱子类型",
+                        closeBtn: 1,
+                        shadeClose: true,
+                        skin: 'layui-layer-molv',
+                        content: html,
+                        area: ['500px', 'auto']
+                    });
+
+                    { // 初始化模块
+                        $("#cargo-type-second").hide();
+                        let type = Number($("#cargo-container-type").val());
+
+                        $.each(nameAndTypeId, function (index, val) {
+                            if (Number(val) === type) {
+                                let appendNode = "<option value='" + nameAndCargoId[index] + "'>" + index + "</option>";
+                                $("#cargo-type-first-selector").append(appendNode);
+                                $("#cargo-type-second-selector").append(appendNode)
+                            }
+                        });
+                    }
+
+
+                    $("#cargo-container-size").change(function () {
+                        let size = $(this).val();
+                        if (Number(size) === 0) {
+                            $("#cargo-type-second").hide();
+                        } else if (Number(size) === 1) {
+                            $("#cargo-type-second").show();
+                        }
+                    });
+                    $("#cargo-container-type").change(function () {
+                        let type = Number($(this).val());
+                        $("#cargo-type-first-selector").empty();
+                        $("#cargo-type-second-selector").empty();
+
+                        $.each(nameAndTypeId, function (index, val) {
+                            if (Number(val) === type) {
+                                let appendNode = "<option value='" + nameAndCargoId[index] + "'>" + index + "</option>";
+                                $("#cargo-type-first-selector").append(appendNode);
+                                $("#cargo-type-second-selector").append(appendNode)
+                            }
+                        });
+                    });
+                    // 添加满箱的货物到数据库
+                    $("#submit-full-container-btn").click(function () {
+                        if ($("#cargo-container-size").val() == 0) { // 如果只提交一个货物的情况下
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: '/api/shipper/add/container-with-cargos',
+                                data: {
+                                    size: $("#cargo-container-size").val(),
+                                    type: $("#cargo-container-type").val(),
+                                    amount: 1,
+                                    cargo_type1: $("#cargo-type-first-selector").val(),
+                                    gross1: $("#cargo-gross-first").val()
+                                },
+                                success: function (resultJson) {
+                                    if (resultJson === true) {
+                                        layer.alert("提交货物成功");
+                                    } else {
+                                        layer.alert("提交货物失败");
+                                    }
+                                },
+                                error: function () {
+                                    layer.alert("提交货物失败");
+                                }
+                            });
+                        } else {
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: '/api/shipper/add/container-with-cargos',
+                                data: {
+                                    size: $("#cargo-container-size").val(),
+                                    type: $("#cargo-container-type").val(),
+                                    amount: 2,
+                                    cargo_type1: $("#cargo-type-first-selector").val(),
+                                    gross1: $("#cargo-gross-first").val(),
+                                    cargo_type2: $("#cargo-type-second-selector").val(),
+                                    gross2: $("#cargo-gross-second").val()
+                                },
+                                success: function (resultJson) {
+                                    if (resultJson === true) {
+                                        layer.alert("提交货物成功");
+                                    } else {
+                                        layer.alert("提交货物失败");
+                                    }
+                                },
+                                error: function () {
+                                    layer.alert("提交货物失败");
+                                }
+                            });
+                        }
+                    });
+                });
+
+            });
+
+            /**
+             * 提交散货 OK
+             */
+            $("#submit-cargo").click(function () {
+                let typeJson;
+                let content;
+                let index1 = layer.load();
+                // 构建html
+                content = "<div id='bulk-cargo-selector'>\n" +
+                    "    <div class='bulk-cargo-selector-item'><label class='control-label'>选择类型：</label><select class='select' id='type'>";
+                // ajax获得类型
+                $.get("/api/shipper/get/cargoattrs", function (result) {
+                    layer.close(index1);
+                    typeJson = result;
+                    $.each(typeJson.cargoAttrs, function (index, val) {
+                        content += "<option value='" + val['cargoTypeId'] + "'>" + val['nameAndUnit'] + "</option>";
+                    });
+                    // 构建html
+                    content += "</select></div><div class='bulk-cargo-selector-item'><label class='control-label'>输入数量：</label><input type='text' class='text-primary' id='gross'></div>" +
+                        "<div class='bulk-cargo-selector-item'><button class='btn btn-primary' id='submit-cargo-btn'>提交箱子</button></div>" +
+                        "</div> </select>";
+
+                    layer.open({
+                        area: ['400px', '300px'],
+                        type: 1,
+                        title: "请选择货物属性",
+                        closeBtn: 1,
+                        shadeClose: true,
+                        skin: 'layui-layer-molv',
+                        content: content
+                    });
+
+                    $("#submit-cargo-btn").click(function () {
+                        let index = layer.load();
+                        let data = {
+                            type: $("#type").val(),
+                            gross: $("#gross").val()
+                        };
+                        let func = function (result) {
+                            if (result == true) {
+                                layer.close(index);
+                                layer.alert("货物提交成功");
+                                layer.close(1);
+                            } else {
+                                layer.close(index);
+                                layer.alert("货物提交失败");
+                            }
+                        };
+                        let func2 = function () {
+                            layer.close(index);
+                            layer.alert("货物提交失败");
+                        };
+                        // ajax添加货物
+                        let url = "/api/shipper/add/cargo";
+                        $.ajax(getAjaxData(url, data, func, func2));
+                    });
+                });
+
+            });
+
+            /**
+             * 查看货主已经提交的任务
+             */
+            $("#search-task").click(function () {
+
+            });
+
+
+            /** ----------- 3D模型函数 ---------- **/
+            /**
+             * 3D模型初始化函数
+             */
+            startThreejs(0);
+
+            /**
+             * 获得箱子数据
+             * @returns {{type: string, dataType: string, url: string, data: {id: (*|jQuery), row: (*|jQuery), column: (*|jQuery), layer: (*|jQuery), type: (*|jQuery), size: (*|jQuery)}, success: success, error: error}}
+             */
+            function getContainers() {
+                return {
+                    type: "POST",
+                    dataType: "json",
+                    url: "/api/operator/get/container-view",
+                    data: {
+                        area: areatype
+                    },
+                    success: function (result) {
+                        updateThreejs(result.containers);
+                    },
+                    error: function () {
+                        alert("error!");
+                    }
+                };
+            }
+
+            /**
+             * 3D模型换页函数
+             */
+            $.ajax(getContainers());
+            $("#next-area-btn").click(function () {
+                if (areatype < 3) {
+                    areatype++;
+                    $.ajax(getContainers());
+                }
+            });
+
+            $("#prev-area-btn").click(function () {
+                if (areatype > 0) {
+                    areatype--;
+                    $.ajax(getContainers());
+                }
+            });
+            /** ----------- 3D模型函数 ---------- **/
+        })
+    </script>
     <style>
-        #warpper{
-            border: 2px solid black;
-            width: 80%;
-            height: 1200px;
+        body {
+            background-image: url("../static/img/1.jpg");
+            position: relative;
+        }
+
+        .bulk-cargo-selector-item {
+            height: 70px;
+            margin: 20px;
+        }
+
+        .bulk-cargo-selector-item button {
+            position: relative;
+            left: 120px;
+        }
+
+        #empty-container-selector {
             padding: 20px;
-            position: relative;
-            left: 10%;
         }
 
-        .my-table-warpper {
-            border:2px solid blue;
+        .full-container-selector-item {
+            width: 450px;
+            margin: 10px;
+        }
+
+        .full-container-selector-item button {
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #empty-container-selector button {
+            position: relative;
+            left: 120px;
+        }
+
+        div#back-color-wrapper {
+            background-color: #FFFFFF;
             width: 80%;
-            height: 40%;
-            position: relative;
-            top: 10%;
-            margin-bottom: 50px;
+            height: 100%;
+            position: absolute;
             left: 10%;
+            opacity: 0.5;
+            z-index: -1;
+            border: 2px solid;
+            border-radius: 50px;
         }
 
-        .tools{
+        div#back-wrapper {
             position: relative;
-            left: 5%;
-            width: 90%;
-            height:15%;
-            margin-top: 2%;
-            margin-bottom: 2%;
-            border: 2px solid red;
-        }
-
-        .tools-block{
-            display: block;
-            width: 15%;
-            height: 80%;
+            height: 100%;
             border: 2px solid blue;
-            float: right;
-            position: relative;
-            top: 10%;
-            margin-right: 5%;
         }
 
-        .my-table{
+        div#form-container input {
+            margin: 5px;
+        }
+
+        div#form-container label {
+            text-align: left;
+        }
+
+        h1#redsun-title {
+            text-align: center;
+        }
+
+        div#canvas-frame {
+            border: 3px solid darkcyan;
+            cursor: pointer;
+            width: 600px;
+            height: 400px;
+            left: 30%;
+            transform: translateX(-50%);
+            background-color: #72D1FF;
+        }
+
+        .threejscontainer {
+            position: absolute;
+            height: 80%;
+            left: 60%;
+            top: 220px;
+        }
+
+        #prev-area-btn {
             position: relative;
-            left: 5%;
-            width: 90%;
+            top: 20px;
+            left: -200px;
+        }
+
+        #next-area-btn {
+            position: relative;
+            top: 20px;
+            left: -80px;
+        }
+
+        #left {
+            position: relative;
+            top: 5%;
+            left: 15%;
+            /*border: 2px solid red;*/
             height: 60%;
-            border: 2px solid red;
+            width: 20%;
+            padding: 10%;
         }
 
-        .pagination-warpper{
+        .left-button button {
             position: relative;
-            left: 22%;
+            top: -80px;
+            left: -80px;
+            margin: 20px;
         }
 
-        table.altrowstable {
-            font-family: verdana,arial,sans-serif;
-            font-size:11px;
-            color:#333333;
-            border-width: 1px;
-            border-color: #a9c6c9;
-            border-collapse: collapse;
-        }
-        table.altrowstable th {
-            border-width: 1px;
-            padding: 8px;
-            border-style: solid;
-            border-color: #a9c6c9;
-        }
-        table.altrowstable td {
-            border-width: 1px;
-            padding: 8px;
-            border-style: solid;
-            border-color: #a9c6c9;
-        }
-        .oddrowcolor{
-            background-color:#d4e3e5;
-        }
-        .evenrowcolor{
-            background-color:#c3dde0;
-        }
 
+        #right {
+            position: relative;
+            left: 30%;
+            height: 500px;
+            width: 1000px;
+            top: -50%;
+        }
 
 
     </style>
+    <link href="../static/css/operator-page-ui.css" rel="stylesheet">
 </head>
 <body>
 
-<div id="warpper">
-    <div class="my-table-warpper" id="table-top">
-        <div class="tools">
-            <div class="tools-block">
-                <select name="" id="" value>
-                    <option value="0">测试数据</option>
-                    <option value="1">测试数据</option>
-                    <option value="2">测试数据</option>
-                </select>
-            </div>
-            <div class="tools-block"></div>
+<div id="back-color-wrapper"></div>
+<div id="back-wrapper">
+    <div id="my-title">
+        <h1 id="redsun-title">欢迎来到红太阳港口管理系统</h1>
+    </div>
+    <div id="left">
+        <div class="left-button">
+            <button class="btn btn-hg btn-primary" id="submit-empty-container">提交空箱</button>
         </div>
-        <div class="my-table">
-            <table class="altrowstable">
-                <tr>
-                    <th>测试数据</th>
-                    <th>测试</th>
-                    <th>测试</th>
-                    <th>测试</th>
-                    <th>测试</th>
-                </tr>
-                <tr>
-                    <td>测试</td>
-                    <td>测试</td>
-                    <td>测试</td>
-                    <td>测试</td>
-                    <td>测试</td>
-                </tr>
-
-            </table>
+        <div class="left-button">
+            <button class="btn btn-hg btn-primary" id="submit-full-container">提交货箱</button>
         </div>
-        <div class="pagination-warpper">
-            <div class="pagination pagination-success">
-                <a href="#" class="btn btn-success previous">Previous</a>
-
-                <ul>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="">4</a></li>
-                    <li><a href="">5</a></li>
-                </ul>
-
-                <a href="#" class="btn btn-success next">Next</a>
-            </div>
+        <div class="left-button">
+            <button class="btn btn-hg btn-primary" id="submit-cargo">提交散货</button>
+        </div>
+        <div class="left-button">
+            <button class="btn btn-hg btn-primary" id="search-task">任务列表</button>
         </div>
     </div>
-    <div class="my-table-warpper" id="table-bottom">
-        <div class="tools">
-
-        </div>
-        <div class="mytable">
-
-        </div>
-        <div class="pagination-warpper">
-            <div class="pagination pagination-success">
-                <a href="#" class="btn btn-success previous">Previous</a>
-
-                <ul>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                </ul>
-
-                <a href="#" class="btn btn-success next">Next</a>
+    <div id="right">
+        <div class="threejscontainer" id="3jscontainer">
+            <div id="canvas-frame"></div>
+            <div id="canvas-button">
+                <button id="prev-area-btn" class="btn btn-primary btn-wide mrm">上一区域</button>
+                <button id="next-area-btn" class="btn btn-primary btn-wide mrm">下一区域</button>
             </div>
         </div>
     </div>
