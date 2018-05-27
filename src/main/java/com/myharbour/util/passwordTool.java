@@ -40,10 +40,16 @@ public class passwordTool {
     /**
      * 加盐的md5摘要算法
      * @param password 原始密码
-     * @param salt 混淆字符串
      * @return 32位十六进制字符串
      */
-    public static String addSaltMD5(String password,String salt){
+    public static String addSaltMD5(String password){
+        String salt = "0a14b519065d82e8ddf86582e0751993";
         return md5Password(password+salt);
+    }
+
+    public static void main(String[] args) {
+        String s = "zqwmoha";
+        String ss = "qweqwe";
+        System.out.println(addSaltMD5(s));
     }
 }
