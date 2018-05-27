@@ -7,7 +7,7 @@
           href="http://cdn.staticfile.org/twitter-bootstrap/3.1.1/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="../static/css/flat-ui.min.css" rel="stylesheet">
-    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="../static/js/jquery.min.js"></script>
     <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script src="../static/js/jqPaginator.js"></script>
@@ -133,12 +133,12 @@
                 $.each(content, function (index, val) {
                     $.each(val, function (i, v) {
                         let tt;
-                        (v['cargo']['containerId'] == null) ? tt = "未装箱" : tt = ("已装箱，箱子id：" + v['cargo']['containerId']);
+                        (v['cargo']['containerId'] == null) ? tt = "<th jq-id='0'>未装箱</th>" : tt = ("<th jq-id='" + v['cargo']['containerId'] + "'>已装箱，箱子id：" + v['cargo']['containerId'] + "</th>");
                         let trHtml = "<tr class='my-tr'>" +
                             "<th>" + v['cargo']['cargoId'] + "</th>" +
                             "<th>" + v['cargoAttr']['cargoName'] + "</th>" +
                             "<th>" + v['cargo']['gross'] + "</th>" +
-                            "<th>" + tt + "</th>" +
+                            tt +
                             "</tr>";
                         table.append(trHtml);
                     });
@@ -198,36 +198,84 @@
                                 let position;
                                 // ajax请求获得数据（可插入位置）
 
-                                let content = $("<div id='container-selectable-position'></div>");
-
-                                $.each(resultJson.container, function (index, val) {
-                                    let value = val['row'] + ',' + val['column'] + ',' + val['layer'];
-                                    let button = "<button class='btn btn-primary btn-sm container-selectable-position-btn'>" + value + "</button>";
-                                    content.append(button);
+                                let myIndex = layer.load();
+                                let areaName = {
+                                    0: '空箱区',
+                                    1: '普通区',
+                                    2: '冷冻区',
+                                    3: '危险区'
+                                };
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "JSON",
+                                    url: "/api/operator/get/move-insertable-area",
+                                    data: {
+                                        id: containerID
+                                    },
+                                    success: function (resultJson) {
+                                        layer.close(myIndex);
+                                        let content = $("<div id='container-selectable-position'></div>");
+                                        $.each(resultJson.postition, function (index, val) {
+                                            let value = areaName[val['area']] + val['row'] + ',' + val['column'] + ',' + val['layer'];
+                                            let button = "<button class='btn btn-primary btn-sm container-selectable-position-btn' jq-row='" + val['row'] + "' jq-column='" + val['column'] + "' jq-layer='" + val['layer'] + "'>" + value + "</button>";
+                                            content.append(button);
+                                        });
+                                        layer.open({
+                                            type: 1,
+                                            title: "可插入位置",
+                                            closeBtn: 1,
+                                            shadeClose: true,
+                                            skin: 'layui-layer-molv',
+                                            content: content.html(),
+                                            area: ['800px', 'auto']
+                                        });
+                                        // 位置按钮事件监听器
+                                        $(".container-selectable-position-btn").click(function () {
+                                            position = $(this).text();
+                                            let myIndex = layer.load();
+                                            let row = $(this).attr('jq-row');
+                                            let column = $(this).attr('jq-column');
+                                            let mylayer = $(this).attr('jq-layer');
+                                            layer.confirm("确定要插入到该位置？", function (index) {
+                                                // ajax请求插入
+                                                $.ajax({
+                                                    type: "POST",
+                                                    dataType: "JSON",
+                                                    url: "/api/operator/move/container",
+                                                    data: {
+                                                        id: containerID,
+                                                        row: row,
+                                                        column: column,
+                                                        layer: mylayer
+                                                    },
+                                                    success: function (resultJson) {
+                                                        layer.close(myIndex);
+                                                        layer.alert("移动位置成功");
+                                                        layer.close(index);
+                                                        $.ajax(getContainers());
+                                                    },
+                                                    error: function () {
+                                                        layer.close(myIndex);
+                                                        layer.alert("移动位置失败");
+                                                    }
+                                                });
+                                                alert(position);
+                                                layer.close(myIndex);
+                                                layer.close(index);
+                                                layer.close(index - 1);
+                                                layer.close(index - 2);
+                                                layer.close(index - 3);
+                                            }, function (index) {
+                                                layer.close(myIndex);
+                                                layer.close(index);
+                                            });
+                                        });
+                                    },
+                                    error: function () {
+                                        layer.close(myIndex);
+                                        layer.alert("获取可插入位置失败");
+                                    }
                                 });
-                                console.log(content.html());
-                                layer.open({
-                                    type: 1,
-                                    title: "可插入位置",
-                                    closeBtn: 1,
-                                    shadeClose: true,
-                                    skin: 'layui-layer-molv',
-                                    content: content.html(),
-                                    area: ['800px', 'auto']
-                                });
-                                // 位置按钮事件监听器
-                                $(".container-selectable-position-btn").click(function () {
-                                    position = $(this).text();
-                                    layer.confirm("确定要插入到该位置？", function (index) {
-                                        // ajax请求插入
-                                        alert(position);
-                                        layer.close(index);
-                                        layer.close(index - 1);
-                                        layer.close(index - 2);
-                                    }, function (index) {
-                                        layer.close(index);
-                                    });
-                                })
                             });
 
                             $("#remove-container-btn").click(function () {
@@ -247,6 +295,27 @@
                                             success: function () {
                                                 layer.close(loadIndex);
                                                 layer.alert('删除成功');
+                                                let loadIndex1 = layer.load();
+                                                $.ajax({
+                                                    type: "POST",
+                                                    dataType: "json",
+                                                    url: '/api/operator/get/containers',
+                                                    data: {
+                                                        size: $("#search-container-size").val(),
+                                                        type: $("#search-container-type").val(),
+                                                        area: $("#search-container-area").val(),
+                                                        page: $("#table-top li.active").attr("jp-data")
+                                                    },
+                                                    success: function (resultJson) {
+                                                        $.ajax(getContainers());
+                                                        layer.close(loadIndex1);
+                                                        getContainerDataByPage(resultJson.containers, containerTable);
+                                                    },
+                                                    error: function () {
+                                                        layer.close(loadIndex1);
+                                                        layer.alert("表格信息请求失败");
+                                                    }
+                                                });
                                             },
                                             error: function () {
                                                 layer.close(loadIndex);
@@ -256,29 +325,6 @@
 
                                         layer.close(index);
                                         layer.close(index - 1);
-                                        // 修改数据库后需要刷新 这里的json需要得到回传的json
-
-                                        let loadIndex1 = layer.load();
-                                        $.ajax({
-                                            type: "POST",
-                                            dataType: "json",
-                                            url: '/api/operator/get/containers',
-                                            data: {
-                                                size: $("#search-container-size").val(),
-                                                type: $("#search-container-type").val(),
-                                                area: $("#search-container-area").val(),
-                                                page: $("#table-top li.active").attr("jp-data")
-                                            },
-                                            success: function (resultJson) {
-                                                layer.close(loadIndex1);
-                                                getContainerDataByPage(resultJson.containers, containerTable);
-                                            },
-                                            error: function () {
-                                                layer.close(loadIndex1);
-                                                layer.alert("表格信息请求失败");
-                                            }
-                                        });
-
                                     }, function () { // 取消调用的函数
                                     });
                             });
@@ -309,25 +355,32 @@
                     // 箱子里的货物
                     let content;
                     // 获取当前选中的箱子的ID
-                    let containerID = Number($(this).children().first().text());
+                    let cargoId = Number($(this).children().first().text());
+                    let cargoType = $(this).children().eq(1).text();
+                    let cargoGross = Number($(this).children().eq(2).text());
+                    let containerId = Number($(this).children().eq(3).attr('jq-id'));
 
+                    console.log(containerId);
                     // ajax请求获得数据，通过箱子ID获得内部货物
                     let cargoData = {
                         "cargo":
                             [{
-                                "cargoId": 10000000,
-                                "typeId": 10000000,
-                                "gross": 1088,
-                                "containerId": 10000000
+                                "cargoId": cargoId,
+                                "typeId": cargoType,
+                                "gross": cargoGross,
+                                "containerId": containerId
                             }]
                     };
 
-
                     $.each(cargoData.cargo, function (index, val) {
+                        let ttt = '';
+                        if (containerId === 0) {
+                            ttt = "</p><button class='btn btn-info' id='empty-move-cargo-btn'>插入空箱子</button>";
+                        }
                         content = "<div id='open-data-cargo'><p>货物&nbsp&nbspID：" + val['cargoId'] +
                             "</p><p>货物类型：" + val['typeId'] +
                             "</p><p>货物数量：" + val['gross'] +
-                            "</p><button class='btn btn-info' id='empty-move-cargo-btn'>插入空箱子</button><button class='btn btn-info' id='half-move-cargo-btn'>插入有货箱子</button>" +
+                            ttt +
                             "</div>"
                     });
 
@@ -342,89 +395,136 @@
 
                     // 插入到空箱中
                     $("#empty-move-cargo-btn").click(function () {
-                        let position;
+                        let myIndex = layer.load();
                         // ajax请求获得数据（可插入位置）
-                        let resultJson = {
-                            "container": ["123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778", "1232313", "12356778", "123456", "19988888", "1233333", "1232313", "12356778"]
-                        };
-                        let content = $("<div id='cargo-selectable-position'></div>");
-                        let body = $("<div id='layer-body'></div>");
-                        $.each(resultJson.container, function (index, val) {
-                            let value = val;
-                            let button = "<button class='btn btn-primary btn-sm cargo-selectable-position-btn'>" + value + "</button>";
-                            body.append(button);
-                        });
-
-
-                        content.append(body);
-                        console.log(content.html());
-                        layer.open({
-                            type: 1,
-                            title: "可插入的箱子",
-                            closeBtn: 1,
-                            shadeClose: true,
-                            skin: 'layui-layer-molv',
-                            content: content.html(),
-                            area: ['800px', '600px']
-                        });
-
-                        // 位置按钮事件监听器
-                        function boundAfterRefresh() {
-                            $(".cargo-selectable-position-btn").click(function () {
-                                position = $(this).text();
-                                layer.confirm("确定要插入到该位置？", function (index) {
-                                    // ajax请求插入
-                                    alert(position);
-                                    layer.close(index);
-                                    layer.close(index - 1);
-                                    layer.close(index - 2);
-                                }, function (index) {
-                                    layer.close(index);
+                        $.ajax({
+                            type: "POST",
+                            dataType: "JSON",
+                            url: "/api/operator/get/loadable-empty-containers",
+                            data: {
+                                id: cargoId
+                            },
+                            success: function (resultJson) {
+                                layer.close(myIndex);
+                                let content = $("<div id='cargo-selectable-position'></div>");
+                                let body = $("<div id='layer-body'></div>");
+                                $.each(resultJson.containers, function (index, val) {
+                                    let value = val['containerId'];
+                                    let button = "<button class='btn btn-primary btn-sm cargo-selectable-position-btn'>" + value + "</button>";
+                                    body.append(button);
                                 });
-                            });
-                        }
+                                content.append(body);
+                                layer.open({
+                                    type: 1,
+                                    title: "可插入的箱子",
+                                    closeBtn: 1,
+                                    shadeClose: true,
+                                    skin: 'layui-layer-molv',
+                                    content: content.html(),
+                                    area: ['800px', 'auto']
+                                });
 
-                        boundAfterRefresh();
+                                // 位置按钮事件监听器
+                                $(".cargo-selectable-position-btn").click(function () {
+                                    let containerId = $(this).text();
+                                    layer.confirm("确定要插入到该箱子？", function (index) {
+                                        // ajax请求插入
+                                        $.ajax(
+                                            {
+                                                type: "POST",
+                                                dataType: "JSON",
+                                                url: "/api/operator/get/load-insertable-area",
+                                                data: {
+                                                    id: containerId
+                                                },
+                                                success: function (resultJson) {
+                                                    layer.close(index);
+                                                    //选择可插入的箱子的位置
+                                                    let areaName = {
+                                                        0: '空箱区',
+                                                        1: '普通区',
+                                                        2: '冷冻区',
+                                                        3: '危险区'
+                                                    };
+                                                    let content = $("<div id='container-selectable-position'></div>");
+                                                    $.each(resultJson.postition, function (index, val) {
+                                                        let value = areaName[val['area']] + val['row'] + ',' + val['column'] + ',' + val['layer'];
+                                                        let button = "<button class='btn btn-primary btn-sm container-selectable-position-btn' jq-row='" + val['row'] + "' jq-column='" + val['column'] + "' jq-layer='" + val['layer'] + "' + jq-area='"+val['area']+"'>" + value + "</button>";
+                                                        content.append(button);
+                                                    });
+                                                    layer.open({
+                                                        type: 1,
+                                                        title: "装箱后移动到位置",
+                                                        closeBtn: 1,
+                                                        shadeClose: true,
+                                                        skin: 'layui-layer-molv',
+                                                        content: content.html(),
+                                                        area: ['800px', '600px']
+                                                    });
 
-                    });
-                    // 插入到有货的箱子中
-                    $("#half-move-cargo-btn").click(function () {
-                        let position;
-                        // ajax请求获得数据（可插入位置）
-                        let resultJson = {
-                            "container": ["空箱区", "19988888", "1233333", "1232313", "12356778"]
-                        };
-                        let content = $("<div id='cargo-selectable-position'></div>");
-                        let body = $("<div id='layer-body'></div>");
-                        $.each(resultJson.container, function (index, val) {
-                            let value = val;
-                            let button = "<button class='btn btn-primary btn-sm cargo-selectable-position-btn'>" + value + "</button>";
-                            body.append(button);
+                                                    // 绑定插入按钮
+                                                    $(".container-selectable-position-btn").click(function () {
+                                                        let position = $(this).text();
+                                                        let myIndex = layer.load();
+                                                        let row = $(this).attr('jq-row');
+                                                        let column = $(this).attr('jq-column');
+                                                        let mylayer = $(this).attr('jq-layer');
+                                                        let area = $(this).attr('jq-area');
+                                                        layer.confirm("确定要插入到该位置？", function (index) {
+                                                            // ajax请求插入
+                                                            $.ajax({
+                                                                type: "POST",
+                                                                dataType: "JSON",
+                                                                url: "/api/operator/import/load-a-cargo-into-an-empty-container",
+                                                                data: {
+                                                                    cargoId:cargoId,
+                                                                    containerId: containerId,
+                                                                    row: row,
+                                                                    column: column,
+                                                                    layer: mylayer,
+                                                                    area:area
+                                                                },
+                                                                success: function (resultJson) {
+                                                                    layer.close(myIndex);
+                                                                    layer.alert("移动位置成功");
+                                                                    layer.close(index);
+                                                                    $.ajax(getContainers());
+                                                                },
+                                                                error: function () {
+                                                                    layer.close(myIndex);
+                                                                    layer.alert("移动位置失败");
+                                                                }
+                                                            });
+                                                            alert(position);
+                                                            layer.close(myIndex);
+                                                            layer.close(index);
+                                                            layer.close(index - 1);
+                                                            layer.close(index - 2);
+                                                            layer.close(index - 3);
+                                                        }, function (index) {
+                                                            layer.close(myIndex);
+                                                            layer.close(index);
+                                                        });
+                                                    });
+
+                                                },
+                                                error: function () {
+                                                    layer.close(Index);
+                                                    layer.alert("获取箱子可插入位置失败");
+                                                }
+                                            }
+                                        );
+                                    }, function (index) {
+                                        layer.close(index);
+                                    });
+                                });
+                            },
+                            error: function () {
+                                layer.close(myIndex);
+                                layer.alert("查询可插入箱子失败")
+                            }
                         });
-                        content.append(body);
-                        console.log(content.html());
-                        layer.open({
-                            type: 1,
-                            title: "可插入的箱子",
-                            closeBtn: 1,
-                            shadeClose: true,
-                            skin: 'layui-layer-molv',
-                            content: content.html(),
-                            area: ['800px', '600px']
-                        });
-                        // 位置按钮事件监听器
-                        $(".cargo-selectable-position-btn").click(function () {
-                            position = $(this).text();
-                            layer.confirm("确定要插入到该位置？", function (index) {
-                                // ajax请求插入
-                                alert(position);
-                                layer.close(index);
-                                layer.close(index - 1);
-                                layer.close(index - 2);
-                            }, function (index) {
-                                layer.close(index);
-                            });
-                        });
+
 
                     });
                 });

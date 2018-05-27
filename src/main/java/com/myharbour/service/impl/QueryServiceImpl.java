@@ -110,8 +110,8 @@ public class QueryServiceImpl implements QueryService {
                 null,
                 null,
                 null,
-                null,
-                containerType, new RowBounds());
+                containerType,
+                null, new RowBounds());
         return containers;
     }
 }

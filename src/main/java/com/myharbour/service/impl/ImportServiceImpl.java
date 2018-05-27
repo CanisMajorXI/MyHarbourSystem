@@ -62,7 +62,7 @@ public class ImportServiceImpl implements ImportService {
             throw new RuntimeException();
         ResultantCargoInfo resultantCargoInfo = cargoMapper.getResultantCargoInfoBySpecificParas(cargoId, null,
                 null, null, new RowBounds()).get(0);
-        if (!myContainer.getType().equals(resultantCargoInfo.getCargoAttr().getContainerType()))
+        if (!(myContainer.getType().equals(resultantCargoInfo.getCargoAttr().getContainerType())))
             throw new RuntimeException();
         Cargo cargo = new Cargo();
         cargo.setContainerId(myContainer.getContainerId());

@@ -18,17 +18,17 @@
              */
             $("#submit-empty-container").click(function () {
                 let content;
-                content = "<div id=\"empty-container-selector\">\n" +
-                    "    <label class='control-label'>选择类型：</label><select class='select' id=\"type\">\n" +
-                    "        <option value=\"0\">普通箱</option>\n" +
-                    "        <option value=\"1\">冷冻箱</option>\n" +
-                    "        <option value=\"2\">危险箱</option>\n" +
-                    "    </select>\n" +
-                    "    <label class='control-label'>选择型号：</label><select  class='select' id=\"size\">\n" +
-                    "        <option value=\"0\">小箱子</option>\n" +
-                    "        <option value=\"1\">大箱子</option>\n" +
-                    "    </select>\n" +
-                    "    <button class='btn btn-primary' id='submit-empty-container-btn'>提交箱子</button>\n" +
+                content = "<div id='empty-container-selector'>" +
+                    "    <label class='control-label'>选择类型：</label><select class='select' id='type'>" +
+                    "        <option value='0'>普通箱</option>" +
+                    "        <option value='1'>冷冻箱</option>" +
+                    "        <option value='2'>危险箱</option>" +
+                    "    </select>" +
+                    "    <label class='control-label'>选择型号：</label><select  class='select' id='size'>" +
+                    "        <option value='0'>小箱子</option>" +
+                    "        <option value='1'>大箱子</option>" +
+                    "    </select>" +
+                    "    <button class='btn btn-primary' id='submit-empty-container-btn'>提交箱子</button>" +
                     "</div>";
                 layer.open({
                     type: 1,
@@ -196,7 +196,7 @@
                 let content;
                 let index1 = layer.load();
                 // 构建html
-                content = "<div id='bulk-cargo-selector'>\n" +
+                content = "<div id='bulk-cargo-selector'>" +
                     "    <div class='bulk-cargo-selector-item'><label class='control-label'>选择类型：</label><select class='select' id='type'>";
                 // ajax获得类型
                 $.get("/api/shipper/get/cargoattrs", function (result) {
@@ -252,7 +252,80 @@
              * 查看货主已经提交的任务
              */
             $("#search-task").click(function () {
+                let warrper = $("<div></div>");
 
+                let tableFirst = $("<h5>提交货物状态：</h5><br><table class='altrowstable' style='height: 20%;top: -5%' id='cargo-table'>" +
+                    "<thead>" +
+                    "<tr class='my-tr-head'>" +
+                    "<th>货物ID</th>" +
+                    "<th>货物类型</th>" +
+                    "<th>货物数量</th>" +
+                    "<th>货物状态</th>" +
+                    "</tr>" +
+                    "</thead>" +
+                    "<tbody id='cargo-table-tbody'></tbody>" +
+                    "</table>");
+
+                let tableSecond = $("<h5>提交箱子状态：</h5><br><table class='altrowstable' style='height: 20%;top: -5%' id='cargo-table'>" +
+                    "<thead>" +
+                    "<tr class='my-tr-head'>" +
+                    "<th>箱子ID</th>" +
+                    "<th>箱子类型</th>" +
+                    "<th>货物大小</th>" +
+                    "<th>货物状态</th>" +
+                    "</tr>" +
+                    "</thead>" +
+                    "<tbody id='cargo-table-tbody'></tbody>" +
+                    "</table>");
+
+                $.get("api/shipper/get/cargos-info", function (resultJson) {
+                    let tbody = tableFirst.children("tbody");
+                    $.each(resultJson.cargos,function (index,val) {
+                        let tem = $("<tr class='my-table'></tr>");
+                        tem.append("<th>"+val['cargo']['cargoId'] +"</th>");
+                        tem.append("<th>"+val['cargoAttr']['cargoName'] +"</th>");
+                        tem.append("<th>"+val['cargo']['gross'] +"</th>");
+                        let tt;
+                        Number(val['cargo']['containerId'])===0?tt="尚未装箱":tt=("已装箱，箱子ID："+val['cargo']['containerId']);
+                        tem.append("<th>"+tt +"</th>");
+                        tbody.append(tem)
+                    });
+                    warrper.append(tableFirst);
+
+                    $.get("api/shipper/get/containers-info", function (result) {
+                        let tbody = tableSecond.children("tbody");
+                        let type = {
+                            0: "普通箱",
+                            1: "冷冻箱",
+                            2: "危险箱"
+                        };
+                        let size = {
+                            0: "小箱子",
+                            1: "大箱子"
+                        };
+                        $.each(result.containers,function (index,val) {
+                            let tem = $("<tr class='my-table'></tr>");
+                            tem.append("<th>"+val['containerId'] +"</th>");
+                            tem.append("<th>"+type[val['type']] +"</th>");
+                            tem.append("<th>"+size[val['size']] +"</th>");
+                            let tt;
+                            Number(val['emptyStatus'])===0?tt="空箱":tt=("已经装货");
+                            tem.append("<th>"+tt +"</th>");
+                            tbody.append(tem)
+                        });
+                        warrper.append(tableSecond);
+
+                        layer.open({
+                            type: 1,
+                            title: "任务列表",
+                            closeBtn: 1,
+                            shadeClose: true,
+                            skin: 'layui-layer-molv',
+                            content: warrper.html(),
+                            area: ['800px', 'auto']
+                        });
+                    });
+                });
             });
 
 
@@ -414,7 +487,6 @@
             left: -80px;
             margin: 20px;
         }
-
 
         #right {
             position: relative;
