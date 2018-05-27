@@ -258,6 +258,21 @@ public class OperatorController {
 //        }
 //    }
 
+    @RequestMapping("get/loadable-empty-containers")
+    public ModelAndView getLoadableEmptyContainers(@RequestParam("id") Integer cargoId, ModelMap modelMap) {
+        ModelAndView modelAndView = new ModelAndView();
+        if (cargoId == null) return modelAndView;
+        try {
+            List<Container> containers = queryService.getLoadableEmptyContainers(cargoId);
+            modelMap.addAttribute("containers", containers);
+            modelAndView.setView(new MappingJackson2JsonView());
+            return modelAndView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return modelAndView;
+        }
+    }
+
     @RequestMapping("/get/import-insertable-area")
     public ModelAndView getImportInsertableArea(@RequestParam("id") Integer id, ModelMap modelMap) {
         ModelAndView modelAndView = new ModelAndView();

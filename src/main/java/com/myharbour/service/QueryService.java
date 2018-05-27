@@ -57,6 +57,14 @@ public interface QueryService {
 
 
     List<Position> getInsertablePosition(Integer containerId,Integer op);
+
+
+    /**
+     * 根据货物id返回货物可载入的空箱子
+     * @param cargoId
+     * @return
+     */
+    List<Container> getLoadableEmptyContainers(Integer cargoId);
 //
 //    /**
 //     * @return 获取所有的在仓库内的箱子

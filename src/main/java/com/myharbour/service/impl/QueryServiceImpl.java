@@ -57,7 +57,7 @@ public class QueryServiceImpl implements QueryService {
 
         int limit = 9;//前端一页显示的数量
         RowBounds rowBounds = page == 0 ? new RowBounds() : new RowBounds((page - 1) * limit, limit);
-        return cargoMapper.getResultantCargoInfoBySpecificParas(null,containerId, containerType, userId, rowBounds);
+        return cargoMapper.getResultantCargoInfoBySpecificParas(null, containerId, containerType, userId, rowBounds);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
@@ -96,5 +96,22 @@ public class QueryServiceImpl implements QueryService {
                 return insertablePositionService.getInsertablePositionById(containerId);
         }
         return null;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public List<Container> getLoadableEmptyContainers(Integer cargoId) {
+        ResultantCargoInfo resultantCargoInfo = cargoMapper.getResultantCargoInfoBySpecificParas(cargoId, null, null,
+                null, new RowBounds()).get(0);
+        int containerType = resultantCargoInfo.getCargoAttr().getContainerType();
+        List<Container> containers = containerMapper.getContainers(null,
+                Container.AREA_EMPTY,
+                null,
+                null,
+                null,
+                null,
+                null,
+                containerType, new RowBounds());
+        return containers;
     }
 }
