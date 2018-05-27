@@ -2,6 +2,7 @@ package com.myharbour.controller;
 
 import com.myharbour.pojo.User;
 import com.myharbour.service.UserService;
+import com.myharbour.util.PasswordTool;
 import com.sun.mail.util.MailSSLSocketFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,6 +44,7 @@ public class UserController {
                          HttpSession session) {
         if (username == null || password == null) return false;
         User user = null;
+        password = PasswordTool.md5Password(password);
         try {
             switch (typeOfUsername(username)) {
                 case TYPEOFID:
@@ -56,7 +58,6 @@ public class UserController {
             if (user == null) return false;
             session.setAttribute("user", user);
             return true;
-            //todo
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -117,10 +118,11 @@ public class UserController {
         if (id == null || password == null || email == null || type == null || code == null) return 2;
 
         if (session.getAttribute("verificationCode") == null || !((int) session.getAttribute("verificationCode") == code)) {
-            System.out.println("用户输入的验证码" + code);
-            System.out.println("实际验证码" + session.getAttribute("verificationCode"));
+//            System.out.println("用户输入的验证码" + code);
+//            System.out.println("实际验证码" + session.getAttribute("verificationCode"));
             return 1;
         }
+        password = PasswordTool.md5Password(password);
         User user = new User();
         user.setUserId(id);
         user.setEmail(email);

@@ -8,6 +8,7 @@ import com.myharbour.service.ExportService;
 import com.myharbour.service.ImportService;
 import com.myharbour.service.InsertablePositionService;
 import com.myharbour.service.QueryService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -43,8 +44,11 @@ public class OperatorController {
     public Integer getContainersCount(@RequestParam(name = "size", required = false) Integer containerSize,
                                       @RequestParam(name = "type", required = false) Integer containerType,
                                       @RequestParam(name = "area", required = false) Integer containerArea) {
+        Logger logger = Logger.getLogger(this.getClass());
         try {
-            return queryService.getContainersCountBySpecificParas(containerSize, containerType, containerArea);
+            Integer result = queryService.getContainersCountBySpecificParas(containerSize, containerType, containerArea);
+            logger.info("操作员查询");
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -192,19 +196,20 @@ public class OperatorController {
             return false;
         }
     }
+
     @RequestMapping("/move/container")
     @ResponseBody
     public boolean moveContainer(@RequestParam("id") Integer id,
-                                   @RequestParam("row") Integer row,
-                                   @RequestParam("column") Integer cloumn,
-                                   @RequestParam("layer") Integer layer) {
+                                 @RequestParam("row") Integer row,
+                                 @RequestParam("column") Integer cloumn,
+                                 @RequestParam("layer") Integer layer) {
         try {
             if (id == null || row == null || cloumn == null || layer == null) return false;
             Position position = new Position();
             position.setRow(row);
             position.setColumn(cloumn);
             position.setLayer(layer);
-            importService.movePosition(id,position);
+            importService.movePosition(id, position);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

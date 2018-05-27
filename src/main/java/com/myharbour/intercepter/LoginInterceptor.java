@@ -1,6 +1,8 @@
 package com.myharbour.intercepter;
 
 //import com.redsun.pojo.User;
+
+import com.myharbour.pojo.User;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -12,28 +14,32 @@ import javax.servlet.http.HttpSession;
 public class LoginInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("preHandle");
+        System.out.println(request.getRequestURI());
+        String uri = request.getRequestURI().toLowerCase();
         HttpSession session = request.getSession(false);
+        if (session == null) return sendRedirect(response);
+        User user = (User) session.getAttribute("user");
+        if (user == null) return sendRedirect(response);
+        if (uri.contains("/operator.html")) {
+            if (user.getType() != User.TYPE_OPERATOR) return sendRedirect(response);
+        }
+        if (uri.contains("/shipper.html")) {
+            if (user.getType() != User.TYPE_SHIPPER) return sendRedirect(response);
+        }
+        // /api/operator/**","/api/shipper/**
+        if (uri.contains("/api/operator")) {
+            if (user.getType() != User.TYPE_OPERATOR) return false;
+        }
+        if (uri.contains("/api/shipper")) {
+            if (user.getType() != User.TYPE_SHIPPER) return false;
+        }
+
         return true;
-//        if(session == null) {
-//            sendRedirect(response);
-//            return false;
-//        }
-//        return true;
-    }
-    public void sendRedirect(HttpServletResponse response) throws Exception {
-        System.out.println("用户未登录！");
-        response.sendRedirect("/index.html");
-    }
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
-        System.out.println("postHandle");
-        super.postHandle(request, response, handler, modelAndView);
     }
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-        System.out.println("afterHandle");
-        super.afterCompletion(request, response, handler, ex);
+    public boolean sendRedirect(HttpServletResponse response) throws Exception {
+        System.out.println("用户未登录！");
+        response.sendRedirect("/login.html");
+        return false;
     }
 }

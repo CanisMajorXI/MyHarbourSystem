@@ -184,4 +184,22 @@ public class ShipperController {
             return modelAndView;
         }
     }
+    @RequestMapping("/get/container-view")
+    public ModelAndView getContainerView(@RequestParam("area") Integer area, ModelMap modelMap) {
+        ModelAndView modelAndView = new ModelAndView();
+        if (!(area == Container.AREA_EMPTY
+                || area == Container.AREA_ORDINARY
+                || area == Container.AREA_FREEZE
+                || area == Container.AREA_HAZARD)) return modelAndView;
+        try {
+            List<Container> list = queryService.getContainersBySpecificParas(null, null, area, null, 0);
+            modelMap.addAttribute("containers", list);
+            modelAndView.setView(new MappingJackson2JsonView());
+            return modelAndView;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return modelAndView;
+        }
+    }
+
 }

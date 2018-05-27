@@ -45,7 +45,7 @@ $(document).ready(function () {
             },
             password: {
                 required: true,
-                rangelength:[6,20]
+                rangelength: [6, 20]
             },
         },
         //错误信息提示
@@ -68,11 +68,15 @@ $(document).ready(function () {
                 data: {
                     username: $(".username").val(),
                     password: $(".password").val(),
-                    type:$(".type").val()
+                    type: $(".type").val()
                 },
                 success: function (result) {
-                    if (result && result === 'true')
-                        $(location).attr('href', '/shipper.html');
+                    if (result && result === 'true') {
+                        if ($(".type").val() === "2")
+                            $(location).attr('href', '/shipper.html');
+                        else if ($(".type").val() === "1")
+                            $(location).attr('href', '/operator.html');
+                    }
                     else {
                         $(".submitbtn").after("<label class='error'>用户名或密码错误!</label>");
                         setTimeout(function () {
@@ -171,9 +175,9 @@ $(document).ready(function () {
         },
         onkeyup: false,
         submitHandler: function (form) {
-            var username =  $(".username").val();
-            var password =   $(".password").val();
-            var type =   $(".type").val();
+            var username = $(".username").val();
+            var password = $(".password").val();
+            var type = $(".type").val();
             $.ajax({
                 type: "POST",
                 dataType: "text",
@@ -191,7 +195,7 @@ $(document).ready(function () {
                         $.cookie('registeruser', username);
                         $.cookie('registerpassword', password);
                         $.cookie('type', type);
-                        $(location).attr('href', 'index.html');
+                        $(location).attr('href', 'login.html');
                     }
                     else if (result === '1') {
                         alert("验证码错误！");

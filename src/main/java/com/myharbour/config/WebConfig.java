@@ -2,6 +2,7 @@ package com.myharbour.config;
 
 //import com..interceptor.LoginInterceptor;
 
+import com.myharbour.intercepter.LoginInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -36,14 +37,14 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     //登陆拦截器，通过session判断是否登陆，若某个页面应该登陆才能显示而未登录则直接重定向至Index页面
-//    @Bean
-//    LoginInterceptor loginInterceptor() {
-//        return new LoginInterceptor();
-//    }
-//
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(loginInterceptor()).addPathPatterns("/shipper.html/**");
-//    }
+    @Bean
+    LoginInterceptor loginInterceptor() {
+        return new LoginInterceptor();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loginInterceptor()).addPathPatterns("/shipper.html/**","/operator.html/**","/api/operator/**","/api/shipper/**");
+    }
 }
 

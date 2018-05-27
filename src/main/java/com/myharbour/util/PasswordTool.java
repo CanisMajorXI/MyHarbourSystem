@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * 密码加密的相关工具类
  */
-public class passwordTool {
+public class PasswordTool {
     /**
      * 字符串MD5摘要生成
      * @param password
@@ -48,7 +48,7 @@ public class passwordTool {
     }
 
     public static void main(String[] args) {
-        String s = "zqwmoha";
+        String s = "jiangzeminxuming";
         String ss = "qweqwe";
         System.out.println(addSaltMD5(s));
     }
