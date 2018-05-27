@@ -149,15 +149,14 @@ public class ShipperController {
     }
 
     @RequestMapping("/get/containers-info")
-    public ModelAndView getContainersInfo(@RequestParam("page") Integer page, ModelMap modelMap,
+    public ModelAndView getContainersInfo(ModelMap modelMap,
                                           HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
-        if (page == null || page < 1) return modelAndView;
         User user = (User) session.getAttribute("user");
         if (user == null || user.getType() != User.TYPE_SHIPPER) return modelAndView;
         try {
             List<Container> containers = queryService.
-                    getContainersBySpecificParas(null, null, null, user.getUserId(), page);
+                    getContainersBySpecificParas(null, null, null, user.getUserId(), 0);
             modelMap.addAttribute("containers", containers);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
@@ -168,16 +167,15 @@ public class ShipperController {
     }
 
     @RequestMapping("/get/cargos-info")
-    public ModelAndView getCargosInfo(@RequestParam("page") Integer page, ModelMap modelMap,
+    public ModelAndView getCargosInfo( ModelMap modelMap,
                                       HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
-        if (page == null || page < 1) return modelAndView;
         User user = (User) session.getAttribute("user");
         if (user == null || user.getType() != User.TYPE_SHIPPER) return modelAndView;
         try {
             List<ResultantCargoInfo> list = queryService.
                     getResultantCargoInfoBySpecificParas(null,
-                            null, user.getUserId(), page);
+                            null, user.getUserId(), 0);
             modelMap.addAttribute("cargos", list);
             modelAndView.setView(new MappingJackson2JsonView());
             return modelAndView;
